@@ -1,0 +1,80 @@
+ARG WANWU_ARCH
+
+# --- 第一阶段：构建阶段 ---
+FROM --platform=linux/$WANWU_ARCH golang:1.24.13-bookworm AS builder
+ARG WANWU_ARCH
+WORKDIR /app
+COPY . .
+
+# 使用国内 Go 代理（vendor 目录不提交 git，构建时用 go mod 下载依赖）
+ENV GOPROXY=https://goproxy.cn,direct
+ENV CGO_ENABLED=0
+
+# 依次编译所有 Go 服务，输出到 bin/amd64/
+RUN mkdir -p bin/amd64 && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/tidb-setup     ./cmd/tidb-setup && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/bff-service    ./cmd/bff-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/iam-service    ./cmd/iam-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/model-service  ./cmd/model-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/mcp-service    ./cmd/mcp-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/knowledge-service ./cmd/knowledge-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/rag-service    ./cmd/rag-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/assistant-service ./cmd/assistant-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/agent-service  ./cmd/agent-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/app-service    ./cmd/app-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/channel-service ./cmd/channel-service && \
+    GOOS=linux GOARCH=$WANWU_ARCH go build -o bin/amd64/operate-service ./cmd/operate-service
+
+# --- 第二阶段：运行阶段 ---
+FROM --platform=linux/$WANWU_ARCH golang:1.24.13-bookworm
+ARG WANWU_ARCH
+WORKDIR /app
+
+COPY configs ./configs
+
+# tidb-setup
+COPY --from=builder /app/bin/$WANWU_ARCH/tidb-setup ./bin/tidb-setup
+
+# bff-service
+COPY --from=builder /app/bin/$WANWU_ARCH/bff-service ./bin/bff-service
+EXPOSE 6668
+
+# iam-service
+COPY --from=builder /app/bin/$WANWU_ARCH/iam-service ./bin/iam-service
+EXPOSE 8888
+
+# model-service
+COPY --from=builder /app/bin/$WANWU_ARCH/model-service ./bin/model-service
+EXPOSE 8989
+
+# mcp-service
+COPY --from=builder /app/bin/$WANWU_ARCH/mcp-service ./bin/mcp-service
+EXPOSE 9898
+
+# knowledge-service
+COPY --from=builder /app/bin/$WANWU_ARCH/knowledge-service ./bin/knowledge-service
+EXPOSE 8889
+
+# rag-service
+COPY --from=builder /app/bin/$WANWU_ARCH/rag-service ./bin/rag-service
+EXPOSE 9640
+
+# assistant-service
+COPY --from=builder /app/bin/$WANWU_ARCH/assistant-service ./bin/assistant-service
+EXPOSE 8890
+
+# agent-service
+COPY --from=builder /app/bin/$WANWU_ARCH/agent-service ./bin/agent-service
+EXPOSE 8990
+
+# app-service
+COPY --from=builder /app/bin/$WANWU_ARCH/app-service ./bin/app-service
+EXPOSE 9988
+
+# channel-service
+COPY --from=builder /app/bin/$WANWU_ARCH/channel-service ./bin/channel-service
+EXPOSE 9990
+
+# operate-service
+COPY --from=builder /app/bin/$WANWU_ARCH/operate-service ./bin/operate-service
+EXPOSE 9797

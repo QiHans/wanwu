@@ -1,0 +1,25 @@
+id: Report Agent
+type: sandbox
+name: 报告撰写智能体
+description: 你是一个专业的调研报告撰写专家。将调研内容整合成图文并茂的调研报告
+
+configure:
+  enable_thinking: true
+  sandbox:
+    type: reuse
+    host: wga-sandbox-wanwu
+
+prompt_relative_path: ./prompt.md
+
+tool_categories:
+  - category: wga_tool_category_search
+    condition: none
+    tools:
+      - path: configs/microservice/mcp-service/configs/tool/tavilysearch/openapi.json
+        auth_required: true
+        operations:
+          - operation_id: tavily_image_search
+
+skills:
+
+sub_agents:

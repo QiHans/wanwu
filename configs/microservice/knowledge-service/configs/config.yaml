@@ -1,0 +1,181 @@
+server:
+  grpc-endpoint: 0.0.0.0:8889
+  max-recv-msg-size: 4294967296 # 1024 * 1024 * 1024 * 4 = 4G
+
+# logger configuration
+log:
+  std: true
+  level: info
+  logs:
+    - enable: true
+      filename: log/knowledge-info.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+    - enable: true
+      filename: log/knowledge-err.log
+      level: error
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+access-log:
+  std: true
+  level: info
+  logs:
+    - enable: true
+      filename: log/knowledge-access.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+rpc-log:
+  std: true
+  level: info
+  logs:
+    - enable: true
+      filename: log/knowledge-rpc.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+
+db:
+  name: mysql # mysql | postgres | tidb | oceanbase
+  mysql:
+    address: localhost:3306
+    user: root
+    password: ""
+    database: knowledge_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: false
+  postgres:
+    address: localhost:5432
+    user: postgres
+    password: ""
+    database: knowledge_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: false
+  tidb:
+    address: localhost:4000
+    user: root
+    password: ""
+    database: knowledge_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: false
+  oceanbase:
+    address: localhost:2881
+    user: root@wanwu
+    password: ""
+    database: knowledge_service
+
+minio:
+  endpoint: localhost:9000
+  user: root
+  password: Wanwu123456
+  bucket: rag-doc
+  public-rag-bucket: rag-public
+  public-export-bucket: export-public
+  knowledge-dir: /knowledge
+  knowledge-export-dir: knowledge
+  qa-export-dir: qa
+
+kafka:
+  addr: localhost:9092
+  user: ""
+  password:
+  topic: "doc-rag"
+  knowledge-graph-topic: "rag-knowledge-graph"
+  url-analysis-topic: "url-batch-a-prod"
+  url-import-topic: "url-batch-i-prod"
+  default-partition-num: 3
+
+rag-server:
+  endpoint: 'http://localhost:8681'
+  proxy-point: 'http://localhost:8088'
+  url-analysis-endpoint: 'http://rag-wanwu:8613'
+  url-import-endpoint: 'http://rag-wanwu:8613'
+  init-knowledge-uri: '/rag/init-knowledge-base'
+  update-knowledge-uri: '/rag/update-kb-name'
+  delete-knowledge-uri: '/rag/del-knowledge-base'
+  knowledge-hit-uri: '/callback/v1/rag/search-knowledge-base'
+  get-doc-segment-uri: '/rag/get-content-list'
+  get-child-content-uri: '/rag/get-child-content-list'
+  doc-segment-update-status-uri: '/rag/update-content-status'
+  doc-delete-uri: '/rag/del-knowledge-file'
+  doc-url-analysis-uri: '/url_pra'
+  doc-url-import-uri: '/url_insert'
+  keywords-uri: '/rag/proper_noun'
+  doc-segment-update-labels-uri: '/rag/update-chunk-labels'
+  doc-segment-create-uri: '/rag/batch-add-chunks'
+  doc-segment-update-uri: '/rag/update-chunk'
+  doc-segment-delete-uri: '/rag/batch-delete-chunks'
+  doc-child-segment-create-uri: '/rag/batch-add-child-chunks'
+  doc-child-segment-update-uri: '/rag/update-child-chunk'
+  doc-child-segment-delete-uri: '/rag/batch-delete-child-chunks'
+  batch-delete-meta-key-uri: '/rag/delete-meta-by-keys'
+  batch-rename-meta-key-uri: '/rag/rename-meta-keys'
+  update-file-metas-uri: '/rag/update-file-metas'
+  get-community-report-list-uri: '/rag/get-community-report-list'
+  batch-add-reports-uri: '/rag/batch-add-reports'
+  update-report-uri: '/rag/update-report'
+  batch-delete-reports-uri: '/rag/batch-delete-reports'
+  knowledge-graph-uri: '/rag/knowledgeBase-graph'
+  init-QA-base-uri: '/rag/init-QA-base'
+  delete-QA-base-uri: '/rag/delete-QA-base'
+  update-QA-metas-uri: '/rag/update-QA-metas'
+  delete-QA-meta-key-uri: '/rag/delete-QA-meta-by-keys'
+  rename-QA-meta-key-uri: '/rag/rename-QA-meta-keys'
+  batch-add-qa-pairs-uri: '/rag/batch-add-QAs'
+  update-qa-pair-uri: '/rag/update-QA'
+  update-qa-pair-status-uri: '/rag/update-QA-status'
+  batch-delete-qa-pairs-uri: '/rag/batch-delete-QAs'
+  knowledge-QA-hit-uri: '/callback/v1/rag/search-QA-base'
+  timeout: 120
+
+dify-server:
+  get-datasets-uri: '/datasets'
+  get-dataset-uri: '/datasets/{dataset_id}'
+  timeout: 60
+
+usage-limit:
+  category-depth: 3
+  doc-total: -1
+  punc-types: "？@#@！@#@。@#@?@#@......@#@!@#@."
+  file-types: ".docx;.txt;.pdf;.xlsx;.csv;.pptx;.html;.doc;.xls;.ofd;.wps;.md;.png;.jpg;.jpeg;.mp3;.MP3;.wav;.aac;.m4a;.avi;.mp4;.avi;.mov;.wmv"
+  compressed-file-type: ".zip;.tar.gz"
+  audio-types: "mp3;wav;aac;m4a"
+  video-types: "avi;mp4;mov;wmv"
+  image-types: "png;jpg;jpeg"
+  doc-types:  "pdf;docx;pptx;doc;wps;ofd;xlsx;xls;csv;txt;html;md"
+  max-number-of-files-in-compressed: -1
+  max-file-size: 209715200
+  txt-size-limit: 209715200
+  docx-size-limit: 209715200
+  pdf-size-limit: 209715200
+  excel-size-limit: 209715200
+  csv-size-limit: 209715200
+  pptx-size-limit: 209715200
+  html-size-limit: 209715200
+  compressed-size-limit: 209715200
+  # 文件大小限制30MB
+  file-size-limit: 30
+  #上传接口并发限制
+  upload-concurrent-limit: 100
+  # url数量限制,配置小于等于0时则不限制
+  url-count-limit: 100
+
+knowledge-doc-config:
+  doc-local-file-path: static/temp
+  # 文档预览大小限制，单位：字节，超过此大小不可预览，默认20MB
+  doc-preview-size-max: 20971520
+  doc-preview-file-types: ".txt;.md;.docx;.pptx;.xlsx;.xls;.ofd;.csv;.html;.pdf;.png;.jpg;.jpeg;.mp4;.mp3;url;.aac"
+
+splitters:
+  - name: "\n\n"
+    value: "\n\n"
+  - name: "\n"
+    value: "\n"

@@ -1,0 +1,625 @@
+syntax = "proto3";
+
+package app_service;
+
+import "google/protobuf/empty.proto";
+import "proto/common/common.proto";
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/app-service";
+
+service AppService {
+  // --- apiKey ---
+  rpc CreateApiKey(CreateApiKeyReq) returns (ApiKeyInfo) {}
+  rpc DeleteApiKey(DeleteApiKeyReq) returns (google.protobuf.Empty) {}
+  rpc ListApiKeys(ListApiKeysReq) returns (ApiKeyInfoList) {}
+  rpc UpdateApiKey(UpdateApiKeyReq) returns (google.protobuf.Empty) {}
+  rpc UpdateApiKeyStatus(UpdateApiKeyStatusReq) returns (google.protobuf.Empty) {}
+  rpc GetApiKeyByKey(GetApiKeyByKeyReq) returns (ApiKeyInfo) {}
+  // --- appKey ---
+  rpc GenAppKey(GenAppKeyReq) returns (AppKeyInfo) {}
+  rpc GetAppKeyList(GetAppKeyListReq) returns (AppKeyInfoList) {}
+  rpc DelAppKey(DelAppKeyReq) returns (google.protobuf.Empty) {}
+  rpc GetAppKeyByKey(GetAppKeyByKeyReq) returns (AppKeyInfo) {}
+  // --- exploration ---
+  rpc GetExplorationAppList(GetExplorationAppListReq) returns (ExplorationAppList){}
+  rpc ChangeExplorationAppFavorite(ChangeExplorationAppFavoriteReq) returns (google.protobuf.Empty){}
+  rpc RecordAppHistory(RecordAppHistoryReq) returns (google.protobuf.Empty) {}
+  // --- app ---
+  rpc PublishApp(PublishAppReq) returns (google.protobuf.Empty){}
+  rpc UnPublishApp(UnPublishAppReq) returns (google.protobuf.Empty){}
+  rpc GetAppList(GetAppListReq) returns (AppList){}
+  rpc GetAppListByIds(GetAppListByIdsReq) returns (AppList){}
+  rpc DeleteApp(DeleteAppReq) returns (google.protobuf.Empty) {}
+  rpc GetAppInfo(GetAppInfoReq) returns (AppInfo) {}
+  rpc ConvertAppType(ConvertAppTypeReq) returns (google.protobuf.Empty) {}
+
+  // --- url ---
+  rpc AppUrlCreate(AppUrlCreateReq) returns (google.protobuf.Empty) {}
+  rpc AppUrlDelete(AppUrlDeleteReq) returns (google.protobuf.Empty) {}
+  rpc AppUrlUpdate(AppUrlUpdateReq) returns (google.protobuf.Empty) {}
+  rpc GetAppUrlList(GetAppUrlListReq) returns (GetAppUrlListResp) {}
+  rpc GetAppUrlInfoBySuffix(GetAppUrlInfoBySuffixReq) returns (AppUrlInfo) {}
+  rpc AppUrlStatusSwitch(AppUrlStatusSwitchReq) returns (google.protobuf.Empty) {}
+
+   // --- conversation ---
+  rpc GetConversationByID(GetConversationByIDReq) returns (ConversationInfo) {}
+  rpc CreateConversation(CreateConversationReq) returns (google.protobuf.Empty) {}
+
+  // --- chatflowApplication ---
+  rpc GetChatflowApplication(GetChatflowApplicationReq) returns (ChatflowApplicationInfo) {}
+  rpc GetChatflowByApplicationID(GetChatflowByApplicationIDReq) returns (ChatflowApplicationInfo) {}
+  rpc CreateChatflowApplication(CreateChatflowApplicationReq) returns (google.protobuf.Empty) {}
+
+  // --- statistic ---
+  rpc GetModelStatistic(GetModelStatisticReq) returns (ModelStatistic) {}
+  rpc RecordModelStatistic(RecordModelStatisticReq) returns (google.protobuf.Empty) {}
+  rpc GetModelStatisticList(GetModelStatisticListReq) returns (GetModelStatisticListResp) {}
+  rpc GetAppStatistic(GetAppStatisticReq) returns (AppStatistic) {}
+  rpc RecordAppStatistic(RecordAppStatisticReq) returns (google.protobuf.Empty) {}
+  rpc GetAppStatisticList(GetAppStatisticListReq) returns (GetAppStatisticListResp) {}
+
+   // --- api key statistic ---
+  rpc GetAPIKeyStatistic(GetAPIKeyStatisticReq) returns (APIKeyStatistic) {}
+  rpc GetAPIKeyStatisticList(GetAPIKeyStatisticListReq) returns (GetAPIKeyStatisticListResp) {}
+  rpc GetAPIKeyStatisticRecord(GetAPIKeyStatisticRecordReq) returns (GetAPIKeyStatisticRecordResp) {}
+  rpc RecordAPIKeyStatistic(RecordAPIKeyStatisticReq) returns (google.protobuf.Empty) {}
+}
+
+
+// 创建API Key请求
+message CreateApiKeyReq {
+  string name = 1;
+  string desc = 2;
+  int64 expiredAt = 3;
+  string userId = 4;
+  string orgId = 5;
+}
+
+// 删除API Key请求
+message DeleteApiKeyReq {
+  string keyId = 1;
+}
+
+// 更新API Key请求
+message UpdateApiKeyReq {
+  string keyId = 1;
+  string name = 2;
+  string desc = 3;
+  int64 expiredAt = 4;
+  string userId = 5;
+  string orgId = 6;
+}
+
+// 更新API Key状态请求
+message UpdateApiKeyStatusReq {
+  string keyId = 1;
+  bool status = 2; // false-禁用, true-启用
+}
+
+message GetApiKeyByKeyReq {
+  string apiKey = 1;
+}
+// 列表请求
+message ListApiKeysReq {
+  int32 pageNo = 1;
+  int32 pageSize = 2;
+  repeated string orgIds = 3;
+  repeated string userIds = 4;
+}
+
+// API Key信息响应
+message ApiKeyInfo {
+  string keyId = 1; // ID
+  string key = 2; // 生成的ApiKey
+  string userId = 3; // 创建者
+  string name = 4; // 名称
+  string desc = 5; // 描述
+  int64 expiredAt = 6; // 过期时间 yyyy-mm-dd
+  int64 createdAt = 7; // 创建时间 yyyy-mm-dd
+  bool status = 8; // 状态
+  string orgId = 9; // 组织
+}
+
+
+message GenAppKeyReq {
+  string appId = 1;
+  string appType = 2;
+  string userId = 3;
+  string orgId = 4;
+}
+
+message GetAppKeyListReq {
+  string appId = 1;
+  string appType = 2;
+  string userId = 3;
+  string orgId = 4;
+}
+
+message AppKeyInfoList {
+  repeated AppKeyInfo info = 1;
+  int64 total = 2;
+}
+
+message AppKeyInfo {
+  string appKeyId = 1;
+  string appKey = 2;
+  string userId = 3;
+  string orgId = 4;
+  string appId = 5;
+  string appType = 6;
+  int64 createdAt = 7;
+}
+
+message DelAppKeyReq {
+  string appKeyId = 1;
+}
+
+message GetAppKeyByKeyReq {
+  string appKey = 1;
+}
+
+// API Key列表响应
+message ApiKeyInfoList {
+  repeated ApiKeyInfo items = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 pageSize = 4;
+}
+
+message GetExplorationAppListReq{
+  string name = 1;
+  string appType = 2;
+  string searchType = 3;
+  string userId = 4;
+  string orgId = 5;
+}
+
+message ExplorationAppList{
+  repeated ExplorationAppInfo infos = 1;
+  int64 total = 2;
+}
+
+message ExplorationAppInfo{
+  string appId = 1;
+  string appType = 2;
+  int64 createdAt = 3;
+  int64 updatedAt = 4;
+  bool isFavorite = 5;
+  string publishType = 6;
+  string userId = 7;
+  string orgId = 8;
+}
+
+message AppInfo{
+  string appId = 1;
+  string appType = 2;
+  int64 createdAt = 3;
+  string publishType = 4;
+  string userId = 5;
+  string orgId = 6;
+}
+
+message ChangeExplorationAppFavoriteReq{
+  string appId = 1;
+  string appType = 2;
+  bool isFavorite = 3;
+  string userId = 4;
+  string orgId = 5;
+}
+
+message RecordAppHistoryReq {
+  string userId = 1;
+  string appId = 2;
+  string appType = 3;
+}
+
+message PublishAppReq {
+  string appId = 1;
+  string appType = 2;
+  string publishType = 3;
+  string userId = 4;
+  string orgId = 5;
+}
+
+message UnPublishAppReq {
+  string appId = 1;
+  string appType = 2;
+  string userId = 3;
+}
+
+message GetAppListReq {
+  string appType = 1;
+  repeated string orgIds = 2;
+  repeated string userIds = 3;
+}
+
+message GetAppListByIdsReq {
+  repeated string appIdsList = 1;
+  string appType = 2;
+}
+
+message AppList {
+  repeated AppInfo infos = 1;
+  int64 total = 2;
+}
+
+message DeleteAppReq {
+  string appId = 1 ;
+  string appType = 2;
+}
+
+message GetAppInfoReq {
+  string appId = 1 ;
+  string appType = 2;
+}
+
+message ConvertAppTypeReq {
+  string appId = 1 ;
+  string oldAppType = 2;
+  string newAppType = 3;
+}
+
+message AppUrlInfo {
+  string urlId = 1;
+  string appId = 2;
+  string appType = 3;
+  string name = 4;
+  int64 createdAt = 5;
+  int64 expiredAt = 6;
+  string copyright = 7;
+  bool copyrightEnable = 8;
+  string privacyPolicy = 9;
+  bool privacyPolicyEnable = 10;
+  string disclaimer = 11;
+  bool disclaimerEnable = 12;
+  string suffix = 13;
+  bool status = 14;
+  string userId = 15;
+  string orgId = 16;
+  string description =17;
+}
+
+message AppUrlCreateReq {
+  AppUrlInfo appUrlInfo = 1;
+}
+
+message AppUrlUpdateReq {
+  AppUrlInfo appUrlInfo = 1;
+}
+
+message AppUrlDeleteReq {
+  string urlId = 1;
+}
+
+message GetAppUrlListReq {
+  string appId = 1;
+  string appType = 2;
+}
+
+message GetAppUrlListResp {
+  repeated AppUrlInfo appUrlInfos = 1;
+  int64 total = 2;
+}
+
+message GetAppUrlInfoBySuffixReq {
+  string suffix = 1;
+}
+
+message AppUrlStatusSwitchReq {
+  string urlId = 1;
+  bool status = 2;
+}
+
+message GetConversationByIDReq {
+  string conversionId = 1;
+}
+
+message ConversationInfo {
+  string conversationId = 1;
+  string appId = 2;
+  string appType = 3;
+  string userId = 4;
+  string orgId = 5;
+  string conversationName = 6;
+  int64 createdAt = 7;
+  int64 updatedAt = 8;
+}
+
+message CreateConversationReq {
+  string appId = 1;
+  string appType = 2;
+  string userId = 3;
+  string orgId = 4;
+  string conversationName = 5;
+  string conversationId = 6;
+}
+message GetChatflowApplicationReq {
+  string workflowId = 1;
+  string userId = 2;
+  string orgId = 3;
+}
+
+message CreateChatflowApplicationReq {
+  string workflowId = 1;
+  string applicationId = 2;
+  string userId = 3;
+  string orgId = 4;
+}
+
+message GetChatflowByApplicationIDReq {
+  string applicationId = 1;
+  string userId = 2;
+  string orgId = 3;
+}
+
+message ChatflowApplicationInfo {
+  string applicationId = 1;
+  string userId = 2;
+  string orgId = 3;
+  int64 createdAt = 4;
+  int64 updatedAt = 5;
+  string workflowId =6;
+}
+
+// --- statistic ---
+
+message GetModelStatisticReq {
+  repeated string orgIds = 1;
+  repeated string userIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  repeated string modelIds = 5;
+  string modelType = 6;
+}
+
+message ModelStatistic {
+  ModelStatisticOverview overview = 1;
+  ModelStatisticTrend trend = 2;
+}
+
+message ModelStatisticOverview {
+  ModelStatisticOverviewItem callCount = 1; // 模型调用总数
+  ModelStatisticOverviewItem callFailure = 2; // 模型调用失败数
+  ModelStatisticOverviewItem totalTokens = 3; // tokens请求总数
+  ModelStatisticOverviewItem promptTokens = 4; // tokens输入
+  ModelStatisticOverviewItem completionTokens = 5; // tokens输出
+  ModelStatisticOverviewItem avgCosts = 6; // 平均耗时
+  ModelStatisticOverviewItem avgFirstTokenLatency = 7; // 平均首token时延
+}
+
+message ModelStatisticOverviewItem {
+  float value = 1;
+  float periodOverPeriod = 2;
+}
+
+message ModelStatisticTrend {
+  common.StatisticChart modelCalls = 1; // 模型调用趋势
+  common.StatisticChart tokensUsage = 2; // tokens使用趋势
+}
+
+message RecordModelStatisticReq {
+  string userId = 1;
+  string orgId = 2;
+  string modelId = 3;
+  string model = 4;
+  string provider = 5;
+  string modelType = 6;
+  int64 promptTokens = 7;
+  int64 completionTokens = 8;
+  int64 totalTokens = 9;
+  int64 firstTokenLatency = 10;
+  int64 costs = 11;
+  bool isSuccess = 12;
+  bool isStream = 13;
+}
+
+// --- model statistic list ---
+
+message GetModelStatisticListReq {
+  repeated string orgIds = 1;
+  repeated string userIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  repeated string modelIds = 5;
+  string modelType = 6;
+  int32 pageNo = 7;
+  int32 pageSize = 8;
+}
+
+message GetModelStatisticListResp {
+  repeated ModelStatisticItem items = 1;
+  int32 total = 2;
+}
+
+message ModelStatisticItem {
+  string orgId = 1; 
+  string modelId = 2;
+  string model = 3;
+  string provider = 4;
+  int32 callCount = 5;
+  int32 callFailure = 6;
+  float failureRate = 7;
+  int64 promptTokens = 8;
+  int64 completionTokens = 9;
+  int64 totalTokens = 10;
+  float avgCosts = 11;
+  float avgFirstTokenLatency = 12;
+  string userId = 13;
+}
+
+// --- app statistic ---
+
+message GetAppStatisticReq {
+  repeated string orgIds = 1;
+  repeated string userIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  repeated string appIds = 5;
+  string appType = 6;
+}
+
+message AppStatistic {
+  AppStatisticOverview overview = 1;
+  AppStatisticTrend trend = 2;
+}
+
+message AppStatisticOverview {
+  ModelStatisticOverviewItem callCount = 1;
+  ModelStatisticOverviewItem callFailure = 2;
+  ModelStatisticOverviewItem streamCount = 3;
+  ModelStatisticOverviewItem nonStreamCount = 4;
+  ModelStatisticOverviewItem avgStreamCosts = 5;
+  ModelStatisticOverviewItem avgNonStreamCosts = 6;
+}
+
+message AppStatisticTrend {
+  common.StatisticChart callTrend = 1;
+}
+
+message RecordAppStatisticReq {
+  string userId = 1;
+  string orgId = 2;
+  string appId = 3;
+  string appType = 4;
+  bool isSuccess = 5;
+  bool isStream = 6;
+  int64 streamCosts = 7;
+  int64 nonStreamCosts = 8;
+  string source = 9;
+}
+
+message GetAppStatisticListReq {
+  repeated string orgIds = 1;
+  repeated string userIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  repeated string appIds = 5;
+  string appType = 6;
+  int32 pageNo = 7;
+  int32 pageSize = 8;
+}
+
+message GetAppStatisticListResp {
+  repeated AppStatisticItem items = 1;
+  int32 total = 2;
+}
+
+message AppStatisticItem {
+  string appId = 1;
+  string appType = 2;
+  string orgId = 3;
+  int32 callCount = 4;
+  int32 callFailure = 5;
+  float failureRate = 6;
+  float avgStreamCosts = 7;
+  float avgNonStreamCosts = 8;
+  int32 streamCount = 9; // 流式调用次数
+  int32 nonStreamCount = 10; // 非流式调用次数
+  string userId = 11;
+}
+
+// --- api key statistic ---
+
+message GetAPIKeyStatisticReq {
+  repeated string orgIds = 1;
+  repeated string userIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  repeated string apiKeyIds = 5;
+  repeated string methodPaths = 6;
+}
+
+message APIKeyStatistic {
+  APIKeyStatisticOverview overview = 1;
+  APIKeyStatisticTrend trend = 2;
+}
+
+message APIKeyStatisticOverview {
+  APIKeyStatisticOverviewItem callCount = 1;
+  APIKeyStatisticOverviewItem callFailure = 2;
+  APIKeyStatisticOverviewItem avgStreamCosts = 3;
+  APIKeyStatisticOverviewItem avgNonStreamCosts = 4;
+  APIKeyStatisticOverviewItem streamCount = 5;
+  APIKeyStatisticOverviewItem nonStreamCount = 6;
+}
+
+message APIKeyStatisticOverviewItem {
+  float value = 1;
+  float periodOverPeriod = 2;
+}
+
+message APIKeyStatisticTrend {
+  common.StatisticChart apiCalls = 1;
+}
+
+message GetAPIKeyStatisticListReq {
+  repeated string orgIds = 1;
+  repeated string userIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  repeated string apiKeyIds = 5;
+  repeated string methodPaths = 6;
+  int32 pageNo = 7;
+  int32 pageSize = 8;
+}
+
+message GetAPIKeyStatisticListResp {
+  repeated APIKeyStatisticItem items = 1;
+  int32 total = 2;
+}
+
+message APIKeyStatisticItem {
+  string apiKeyId = 1;
+  string methodPath = 2;
+  int32 callCount = 3;
+  int32 callFailure = 4;
+  float avgStreamCosts = 5;
+  float avgNonStreamCosts = 6;
+  int32 streamCount = 7;
+  int32 nonStreamCount = 8;
+  string orgId = 9;
+  string userId = 10;
+}
+
+message GetAPIKeyStatisticRecordReq {
+  repeated string orgIds = 1;
+  repeated string userIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  repeated string apiKeyIds = 5;
+  repeated string methodPaths = 6;
+  int32 pageNo = 7;
+  int32 pageSize = 8;
+}
+
+message GetAPIKeyStatisticRecordResp {
+  repeated APIKeyStatisticRecordItem items = 1;
+  int32 total = 2;
+}
+
+message APIKeyStatisticRecordItem {
+  string apiKeyId = 1;
+  string methodPath = 2;
+  int64 callTime = 3;
+  string responseStatus = 4;
+  int64 streamCosts = 5;
+  int64 nonStreamCosts = 6;
+  string requestBody = 7;
+  string responseBody = 8;
+  string orgId = 9;
+  string userId = 10;
+}
+
+message RecordAPIKeyStatisticReq {
+  string userId = 1;
+  string orgId = 2;
+  string apiKeyId = 3;
+  string methodPath = 4;
+  int64 callTime = 5;
+  string httpStatus = 6;
+  bool isStream = 7;
+  int64 streamCosts = 8;
+  int64 nonStreamCosts = 9;
+  string requestBody = 10;
+  string responseBody = 11;
+}

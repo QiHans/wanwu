@@ -1,0 +1,55 @@
+server:
+  grpc_endpoint: 0.0.0.0:9797
+  max_recv_msg_size: 4294967296 # 1024 * 1024 * 1024 * 4 = 4G
+
+log:
+  std: true
+  level: debug
+  logs:
+    - enable: true
+      filename: log/operate-info.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+    - enable: true
+      filename: log/operate-err.log
+      level: error
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+
+db:
+  name: mysql # mysql | postgres | tidb | oceanbase
+  mysql:
+    address: localhost:3306
+    user: root
+    password: ""
+    database: operate_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  postgres:
+    address: localhost:5432
+    user: postgres
+    password: ""
+    database: operate_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  tidb:
+    address: localhost:4000
+    user: root
+    password: ""
+    database: operate_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  oceanbase:
+    address: localhost:2881
+    user: root
+    password: ""
+    database: operate_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true

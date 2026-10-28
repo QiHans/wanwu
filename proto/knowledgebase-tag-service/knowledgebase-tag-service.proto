@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package knowledgebase_tag_service;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitlab.ai-yuanjing.cn/ai-platform-private/backend-used-bff/common-api/api/proto/knowledgebase-tag-service";
+
+service KnowledgeBaseTagService {
+  // 获取知识库标签列表
+  rpc SelectKnowledgeTagList(KnowledgeTagSelectReq) returns (KnowledgeTagSelectListResp) {}
+  // 新增知识库标签
+  rpc CreateKnowledgeTag(CreateKnowledgeTagReq) returns (CreateKnowledgeTagResp) {}
+  // 修改知识库标签
+  rpc UpdateKnowledgeTag(UpdateKnowledgeTagReq) returns (google.protobuf.Empty) {}
+  // 删除知识库标签
+  rpc DeleteKnowledgeTag(DeleteKnowledgeTagReq) returns (google.protobuf.Empty) {}
+  // 修改知识库标签
+  rpc BindKnowledgeTag(BindKnowledgeTagReq) returns (google.protobuf.Empty) {}
+  // 修改知识库标签
+  rpc TagBindCount(TagBindCountReq) returns (TagBindCountResp) {}
+}
+
+message KnowledgeTagSelectReq {
+  string userId = 1;
+  string orgId = 2;
+  string tagName = 3; //知识库标签名称，支持模糊搜索
+  string knowledgeId = 4;
+}
+
+message KnowledgeTagSelectListResp {
+  repeated KnowledgeTagInfo knowledgeTagList = 1;
+}
+
+message KnowledgeTagInfo {
+  string tagId = 1;//知识库标签id
+  string tagName = 2; //知识库标签名称
+  bool selected = 3; //是否用户已经设置了
+}
+
+message CreateKnowledgeTagReq{
+  string userId = 1;
+  string orgId = 2;
+  string tagName = 3;
+}
+
+message CreateKnowledgeTagResp{
+  string tagId = 1;
+}
+
+message UpdateKnowledgeTagReq{
+  string userId = 1;
+  string orgId = 2;
+  string tagName = 3;
+  string tagId = 4;
+}
+
+message DeleteKnowledgeTagReq{
+  string userId = 1;
+  string orgId = 2;
+  string tagId = 3;
+}
+
+message BindKnowledgeTagReq{
+  string knowledgeId = 1;
+  string userId = 2;
+  string orgId = 3;
+  repeated string tagIdList = 4;
+}
+
+message TagBindCountReq{
+  string tagId = 1;
+  string userId = 2;
+  string orgId = 3;
+}
+
+message TagBindCountResp{
+  int64 bindCount = 1;
+}

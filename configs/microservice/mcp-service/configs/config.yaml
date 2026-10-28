@@ -1,0 +1,64 @@
+server:
+  grpc_endpoint: 0.0.0.0:9898
+  max_recv_msg_size: 4294967296 # 1024 * 1024 * 1024 * 4 = 4G
+  api_base_url: http://localhost:8088
+
+log:
+  std: true
+  level: debug
+  logs:
+    - enable: true
+      filename: log/mcp-info.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+    - enable: true
+      filename: log/mcp-err.log
+      level: error
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+
+db:
+  name: mysql # mysql | postgres | tidb | oceanbase
+  mysql:
+    address: localhost:3306
+    user: root
+    password: ""
+    database: mcp_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  postgres:
+    address: localhost:5432
+    user: postgres
+    password: ""
+    database: mcp_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  tidb:
+    address: localhost:4000
+    user: root
+    password: ""
+    database: mcp_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  oceanbase:
+    address: localhost:2881
+    user: root@wanwu
+    password: ""
+    database: mcp_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+app:
+  host: localhost:9988
+
+mcp:
+  configPath: configs/microservice/mcp-service/configs/mcp_config.yaml
+
+tool:
+  configPath: configs/microservice/mcp-service/configs/tool_config.yaml

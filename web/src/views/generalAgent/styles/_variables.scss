@@ -1,0 +1,57 @@
+// Typography
+$font-sans: "PingFang SC", "Noto Sans SC", sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Source Han Mono', 'Roboto Mono', 'Noto Sans Mono', monospace;
+
+// Text Colors
+$text-primary: #1f2937;
+$text-secondary: #4b5563;
+$text-muted: #6b7280;
+
+// Brand Colors
+$wga-primary: #10a37f;
+$wga-primary-light: #1ab38b;
+$wga-primary-dark: #0d8a6a;
+$accent-color: #10a37f;
+$accent-dark: #0d8a6a;
+
+// Status Colors
+$thinking-color: #8b5cf6;
+$thinking-dark: #7c3aed;
+$tool-color: #f97316;
+$tool-dark: #c2410c;
+$error-color: #ef4444;
+$error-dark: #dc2626;
+$activity-color: #3b82f6;
+$activity-dark: #2563eb;
+
+// Additional Colors for components
+$orange-primary: #f97316;
+$orange-dark: #c2410c;
+$red-primary: #ef4444;
+$red-dark: #dc2626;
+$blue-primary: #3b82f6;
+$blue-dark: #2563eb;
+$purple-primary: #8b5cf6;
+$purple-dark: #7c3aed;
+$workspace-color: #3b82f6;
+$workspace-light: #60a5fa;
+
+// Background Colors
+$wga-bg: #ffffff;
+$wga-bg-secondary: #f7f7f8;
+
+// Border Colors
+$wga-border: #e5e5e5;
+
+// Text Colors
+$wga-text: #1a1a1a;
+$wga-text-secondary: #666666;
+$wga-text-muted: #999999;
+
+// Layout Heights
+$header-height: 56px;
+
+// Message Max Width
+$message-max-width: 40vw;
+$message-main-max-width: 1080px;
+$message-workspace-max-width: 920px;

@@ -1,0 +1,1025 @@
+syntax = "proto3";
+
+package assistant_service;
+
+import "google/protobuf/empty.proto";
+import "proto/common/common.proto";
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/assistant-service";
+
+service AssistantService {
+  // --- Generic ES Operation ---
+  rpc SaveToES(SaveToESReq) returns (google.protobuf.Empty) {}
+  rpc DeleteFromES(DeleteFromESReq) returns (google.protobuf.Empty) {}
+  rpc SearchFromES(SearchFromESReq) returns (SearchFromESResp) {}
+
+  // --- assistant ---
+  rpc GetAssistantByIds(GetAssistantByIdsReq) returns (AppBriefList) {}   // 根据智能体id集合获取智能体列表
+  rpc AssistantCreate(AssistantCreateReq) returns (AssistantCreateResp) {}
+  rpc AssistantUpdate(AssistantUpdateReq) returns (google.protobuf.Empty) {}
+  rpc AssistantConfigUpdate(AssistantConfigUpdateReq) returns (google.protobuf.Empty) {}
+  rpc AssistantDelete(AssistantDeleteReq) returns (google.protobuf.Empty) {}
+  rpc GetAssistantListMyAll(GetAssistantListMyAllReq) returns (AppBriefList) {}
+  rpc GetAssistantInfo(GetAssistantInfoReq) returns (AssistantInfo) {}
+  rpc GetAssistantIdByUuid(GetAssistantIdByUuidReq) returns (GetAssistantIdByUuidResp) {}
+  rpc AssistantCopy(AssistantCopyReq) returns (AssistantCreateResp) {}
+  rpc GetAssistantDetailById(GetAssistantDetailByIdReq) returns (AssistantDetailResp) {}
+  rpc GetMultiAssistantById(GetMultiAssistantByIdReq) returns (MultiAssistantDetailResp) {}
+
+  // --- assistant snapshot ---
+  rpc AssistantSnapshotCreate(AssistantSnapshotReq) returns (AssistantSnapshotResp) {}
+  rpc AssistantSnapshotUpdate(AssistantSnapshotUpdateReq) returns (google.protobuf.Empty) {}
+  rpc AssistantSnapshotList(AssistantSnapshotListReq) returns (AssistantSnapshotListResp) {}
+  rpc AssistantSnapshotRollback(AssistantSnapshotRollbackReq) returns (google.protobuf.Empty) {}
+  rpc AssistantSnapshotInfo(AssistantSnapshotInfoReq) returns (AssistantInfo) {}
+  rpc AssistantSnapshotLatest(AssistantSnapshotInfoReq) returns (AssistantSnapshot) {}
+  rpc AssistantSnapshotLatestBatch(AssistantSnapshotLatestBatchReq) returns (AssistantSnapshotLatestBatchResp) {}
+
+  // --- workFlow ---
+  rpc AssistantWorkFlowCreate(AssistantWorkFlowCreateReq) returns (google.protobuf.Empty) {}
+  rpc AssistantWorkFlowDelete(AssistantWorkFlowDeleteReq) returns (google.protobuf.Empty) {}
+  rpc AssistantWorkFlowEnableSwitch(AssistantWorkFlowEnableSwitchReq) returns (google.protobuf.Empty) {}
+  rpc AssistantWorkFlowDeleteByWorkflowId(AssistantWorkFlowDeleteByWorkflowIdReq) returns (google.protobuf.Empty) {}
+
+  // --- MCP ---
+  rpc AssistantMCPCreate(AssistantMCPCreateReq) returns (google.protobuf.Empty) {}
+  rpc AssistantMCPDelete(AssistantMCPDeleteReq) returns (google.protobuf.Empty) {}
+  rpc AssistantMCPEnableSwitch(AssistantMCPEnableSwitchReq) returns (google.protobuf.Empty) {}
+  rpc AssistantMCPGetList(AssistantMCPGetListReq) returns (AssistantMCPList) {}
+  rpc AssistantMCPDeleteByMCPId(AssistantMCPDeleteByMCPIdReq) returns (google.protobuf.Empty) {}
+
+  // --- custom builtin tool ---
+  rpc AssistantToolCreate(AssistantToolCreateReq) returns (google.protobuf.Empty) {}
+  rpc AssistantToolDelete(AssistantToolDeleteReq) returns (google.protobuf.Empty) {}
+  rpc AssistantToolEnableSwitch(AssistantToolEnableSwitchReq) returns (google.protobuf.Empty) {}
+  rpc AssistantToolConfig(AssistantToolConfigReq) returns (google.protobuf.Empty) {}
+  rpc AssistantToolDeleteByToolId(AssistantToolDeleteByToolIdReq) returns (google.protobuf.Empty) {}
+
+  // --- skill ---
+  rpc AssistantSkillCreate(AssistantSkillCreateReq) returns (google.protobuf.Empty) {}
+  rpc AssistantSkillDelete(AssistantSkillDeleteReq) returns (google.protobuf.Empty) {}
+  rpc AssistantSkillEnableSwitch(AssistantSkillEnableSwitchReq) returns (google.protobuf.Empty) {}
+
+  // --- conversation ---
+  rpc ConversationCreate(ConversationCreateReq) returns (ConversationCreateResp) {}
+  rpc ConversationDelete(ConversationDeleteReq) returns (google.protobuf.Empty) {}
+  rpc ClearConversationES(ClearConversationESReq) returns (google.protobuf.Empty) {}
+  rpc GetConversationIdByAssistantId(GetConversationIdByAssistantIdReq) returns (ConversationIdResp) {}
+  rpc GetConversationList(GetConversationListReq) returns (GetConversationListResp) {}
+  rpc GetConversationDetailList(GetConversationDetailListReq) returns (GetConversationDetailListResp) {}
+  rpc AssistantConversionStream(AssistantConversionStreamReq) returns (stream AssistantConversionStreamResp) {}
+  rpc MultiAssistantConversionStream(MultiAssistantConversionStreamReq) returns (stream AssistantConversionStreamResp) {}
+
+  // --- custom prompt ---
+  rpc CustomPromptCreate(CustomPromptCreateReq) returns (CustomPromptIDResp) {}
+  rpc CustomPromptDelete(CustomPromptDeleteReq) returns (google.protobuf.Empty) {}
+  rpc CustomPromptUpdate(CustomPromptUpdateReq) returns (google.protobuf.Empty) {}
+  rpc CustomPromptGet(CustomPromptGetReq) returns (CustomPromptInfo) {}
+  rpc CustomPromptGetList(CustomPromptGetListReq) returns (CustomPromptList) {}
+  rpc CustomPromptCopy(CustomPromptCopyReq) returns (CustomPromptIDResp) {}
+
+  // --- multi-agent ---
+  rpc MultiAgentCreate(MultiAgentCreateReq) returns (google.protobuf.Empty) {}
+  rpc MultiAgentDelete(MultiAgentCreateReq) returns (google.protobuf.Empty) {}
+  rpc MultiAgentEnableSwitch(MultiAgentEnableSwitchReq) returns (google.protobuf.Empty) {}
+  rpc MultiAgentConfigUpdate(MultiAgentConfigUpdateReq) returns (google.protobuf.Empty) {}
+
+  // --- wga config ---
+  rpc GetWgaConversationConfig(GetWgaConversationConfigReq) returns (GetWgaConversationConfigResp) {}
+  rpc UpdateWgaConversationConfig(UpdateWgaConversationConfigReq) returns (google.protobuf.Empty) {}
+  rpc GetWgaConfig(GetWgaConfigReq) returns (GetWgaConfigResp) {}
+  rpc UpdateWgaConfig(UpdateWgaConfigReq) returns (google.protobuf.Empty) {}
+
+  // --- wga conversation ---
+  rpc WgaConversationCreate(WgaConversationCreateReq) returns (WgaConversationCreateResp) {}
+  rpc WgaConversationDelete(WgaConversationDeleteReq) returns (google.protobuf.Empty) {}
+  rpc WgaConversationList(WgaConversationListReq) returns (WgaConversationListResp) {}
+  rpc WgaConversationExists(WgaConversationExistsReq) returns (WgaConversationExistsResp) {}
+}
+
+message SaveToESReq {
+  string index_name = 1;
+  string doc_json = 2; // JSON document
+}
+
+message DeleteFromESReq {
+  string index_name = 1;
+  map<string, string> conditions = 2; // e.g. {"conversationId": "123"}
+}
+
+message SearchFromESReq {
+  string index_name = 1;
+  map<string, string> conditions = 2; // e.g. {"conversationId": "123"}
+  int32 page_no = 3;
+  int32 page_size = 4;
+  string sort_field = 5;
+  string sort_order = 6;
+}
+
+message SearchFromESResp {
+  repeated string doc_json_list = 1; // JSON strings
+  int64 total = 2;
+}
+
+message AssistantConversionStreamResp {
+  string content = 1;
+}
+
+message Identity {
+  string userId = 1;
+  string orgId = 2;
+}
+
+message GetAssistantByIdsReq{
+  repeated string assistantIdList = 1;
+  Identity identity = 2;
+}
+
+message GetMultiAssistantByIdReq{
+  uint32 assistantId = 1;
+  Identity identity = 2;
+  string conversationId = 3; // 如果需要历史会话，则需要传入此数据
+  bool draft = 4;//是否是草稿
+  string version = 5; //多智能体版本,不传就标识是最新版本
+  bool filterSubEnable = 6; //过滤值保留开启的子智能体
+}
+
+message GetAssistantDetailByIdReq{
+  uint32 assistantId = 1;
+  Identity identity = 2;
+  string conversationId = 3; // 如果需要历史会话，则需要传入此数据
+  bool draft = 4;//是否是草稿
+  string version = 5; //单智能体版本,不传就标识是最新版本
+}
+
+message AppBriefList{
+  repeated AssistantBrief assistantInfos = 1;
+}
+
+message AssistantCreateReq {
+  common.AppBriefConfig assistantBrief = 1;
+  Identity identity = 2;
+  int32 category = 3;
+}
+
+message AssistantCreateResp {
+  string assistantId = 1;
+}
+
+message AssistantSnapshotReq {
+  string assistantId = 1;
+  string version = 2;
+  string desc = 3;
+  Identity identity = 4;
+  string extra = 5;
+}
+
+message AssistantSnapshotResp {
+  string snapshotId = 1;
+}
+
+message AssistantSnapshotUpdateReq {
+  string assistantId = 1;
+  string extra = 2;
+  string desc = 3;
+  Identity identity = 4;
+}
+
+message AssistantSnapshotListReq {
+  string assistantId = 1;
+  Identity identity = 2;
+}
+
+message AssistantSnapshot {
+  string snapshotId = 1;
+  string assistantId = 2;
+  string version = 3;
+  string desc = 4;
+  int64 createAt = 5;
+  int32 category = 6;
+  string extra = 7;
+}
+
+message AssistantSnapshotListResp {
+  repeated AssistantSnapshot list = 1;
+  int64 total = 2;
+}
+
+message AssistantSnapshotLatestBatchReq {
+  repeated string assistantIdList = 1;
+  Identity identity = 2;
+}
+
+message AssistantSnapshotLatestBatchResp {
+  repeated AssistantSnapshot list = 1;
+}
+
+message AssistantSnapshotRollbackReq {
+  string assistantId = 1;
+  string version = 2;
+  Identity identity = 3;
+}
+
+message AssistantSnapshotInfoReq {
+  string assistantId = 1;
+  string version = 2;
+  Identity identity = 3;
+}
+
+message AssistantUpdateReq {
+  string assistantId = 1;
+  common.AppBriefConfig assistantBrief = 2;
+  Identity identity = 3;
+}
+
+message AssistantConfigUpdateReq {
+  string assistantId = 1;
+  string instructions = 2;
+  string prologue = 3;
+  repeated string recommendQuestion = 4;
+  common.AppModelConfig modelConfig = 5;                  // 模型配置
+  AssistantKnowledgeBaseConfig knowledgeBaseConfig = 6;         // 知识库
+  common.AppModelConfig rerankConfig = 7;                         // Rerank模型
+  Identity identity = 9;
+  AssistantSafetyConfig safetyConfig = 10;
+  AssistantVisionConfig visionConfig = 11;
+  AssistantMemoryConfig memoryConfig = 12;
+  AssistantRecommendConfig recommendConfig = 13; //智能体问题推荐配置信息
+}
+
+message AssistantSafetyConfig {
+  bool enable = 1;
+  repeated SensitiveTable SensitiveTable = 2;
+}
+
+message SensitiveTable {
+  string tableId = 1;
+  string tableName = 2;
+}
+
+message AssistantVisionConfig {
+  int32 maxPicNum = 1;
+  int32 picNum = 2;
+}
+
+message AssistantMemoryConfig {
+  int32 maxHistoryLength = 1;
+}
+
+message AssistantDeleteReq {
+  string assistantId = 1;
+  Identity identity = 2;
+}
+
+message AssistantKnowledgeBaseConfig {
+  repeated string knowledgeBaseIds = 1;   // 知识库信息
+  int32 maxHistory = 2;                           // 最长上下文
+  float threshold = 3;                            // 过滤阈值
+  int32 topK = 4;                                 // topK
+  string matchType = 5; //matchType：vector（向量检索）、text（文本检索）、mix（混合检索：向量+文本）
+  float keywordPriority = 6;// 关键词权重
+  int32 priorityMatch = 7;// 权重匹配，只有在混合检索模式下，选择权重设置后，这个才设置为1
+  float semanticsPriority = 8;// 语义权重
+  float termWeight = 9; // 关键词系数
+  bool termWeightEnable = 10; // 关键词系数开关
+  repeated AppKnowledgeBase appKnowledgeBaseList = 11;
+  bool useGraph = 12;
+}
+
+message AppKnowledgeBase {
+  string knowledgeBaseId = 1;
+  string knowledgeBaseName = 2;
+  int32 graphSwitch = 3; // 知识图谱开关
+  MetaDataFilterParams metaDataFilterParams = 4;
+  int32 category = 5; // 知识库分类 0-知识库，1-问答库，2-多模态知识库
+  string description = 6; // 知识库描述
+}
+
+message MetaDataFilterParams {
+  bool filterEnable = 1; // 元数据过滤开关
+  string filterLogicType = 2;// 元数据逻辑条件：and/or
+  repeated MetaFilterParams metaFilterParams = 3;// 元数据过滤参数列表
+}
+
+message MetaFilterParams {
+  string key = 1;
+  string type = 2;
+  string value = 3;
+  string condition = 4;
+}
+
+message AssistantOnlineSearchConfig {
+  string searchUrl = 1;
+  string searchKey = 2;
+  bool enable = 3;
+  string searchRerankId = 4;
+}
+
+message GetAssistantListMyAllReq {
+  string name = 1;
+  Identity identity = 2;
+}
+
+message GetAssistantIdByUuidReq {
+  string uuid = 1;
+}
+
+message GetAssistantIdByUuidResp {
+  string assistantId = 1;
+}
+
+message AssistantInfo {
+  string assistantId = 1;
+  Identity identity = 2;
+  common.AppBriefConfig assistantBrief = 3;
+  string prologue = 4;
+  string instructions = 5;
+  repeated string recommendQuestion = 6;
+  common.AppModelConfig modelConfig = 7;                 // 模型配置
+  AssistantKnowledgeBaseConfig knowledgeBaseConfig = 8;  // 知识库
+  common.AppModelConfig rerankConfig = 9;                // Rerank模型
+  int32 scope = 11;
+  repeated AssistantWorkFlowInfos workFlowInfos = 12;
+  repeated AssistantMCPInfos mcpInfos = 13;
+  repeated AssistantToolInfos toolInfos = 14;
+  repeated AssistantSkillInfo skillInfos = 15;
+  int64 creatTime = 16;
+  int64 updateTime = 17;
+  AssistantSafetyConfig safetyConfig = 18;
+  AssistantVisionConfig visionConfig = 19;
+  string uuid = 20;
+  repeated AssistantMultiAgentInfos multiAgentInfos = 21;
+  int32 category = 22;
+  AssistantMemoryConfig memoryConfig = 23;
+  AssistantRecommendConfig recommendConfig = 24; //智能体问题推荐配置信息
+}
+
+message AssistantRecommendConfig {
+  bool recommendEnable = 1; // 追问配置开关
+  common.AppModelConfig modelConfig = 2; //模型信息
+  bool promptEnable = 3; // 提示词开关
+  string systemPrompt = 4;//系统提示词
+  int32 maxHistory = 5;//最大历史会话轮次
+}
+
+message AssistantMultiAgentInfos{
+  string agentId = 1; // 子智能体id
+  string name = 2; // 子智能体名称
+  string desc = 3; // 子智能体描述
+  string avatarPath = 4; // 子智能体头像
+  bool enable = 5; // 子智能体是否启用
+}
+
+message AssistantWorkFlowInfos{
+  string id = 1;
+  string workFlowId = 2;
+  string apiName = 3;
+  bool enable = 4;
+}
+
+message AssistantMCPInfos{
+  string id = 1;
+  string mcpId = 2;
+  string mcpType = 3;
+  string actionName = 4;
+  bool enable = 5;
+  string description = 6; // MCP描述
+}
+
+message AssistantToolInfos{
+  string id = 1;
+  string toolId = 2;
+  string toolType = 3;
+  string actionName = 4;
+  bool enable = 5;
+  string toolConfig = 6;
+  string description = 7; // 工具描述
+}
+
+message AssistantSkillInfo {
+  string id = 1;
+  string skillId = 2;
+  string skillType = 3;
+  bool enable = 4;
+  string description = 5; // 技能描述
+}
+
+message GetAssistantInfoReq {
+  string assistantId = 1;
+  Identity identity = 2;
+}
+
+message AssistantCopyReq {
+  string assistantId = 1;
+  Identity identity = 2;
+}
+
+message AssistantWorkFlowCreateReq {
+  string assistantId = 1;
+  string schema = 2;
+  string workFlowId = 3;
+  Identity identity = 4;
+}
+
+message AssistantWorkFlowDeleteReq {
+  string assistantId = 1;
+  string workFlowId = 2;
+  Identity identity = 3;
+}
+
+message AssistantWorkFlowEnableSwitchReq {
+  string assistantId = 1;
+  string workFlowId = 2;
+  bool enable = 3;
+  Identity identity = 4;
+}
+
+message AssistantMCPCreateReq {
+  string assistantId = 1;
+  string mcpId = 2;
+  string mcpType = 3;
+  string actionName = 4;
+  Identity identity = 5;
+}
+
+message AssistantMCPDeleteReq {
+  string assistantId = 1;
+  string mcpId = 2;
+  string mcpType = 3;
+  string actionName = 4;
+  Identity identity = 5;
+}
+
+message AssistantMCPDeleteByMCPIdReq {
+  string mcpId = 1;
+  string mcpType = 2;
+  Identity identity = 3;
+}
+
+message AssistantMCPEnableSwitchReq {
+  string assistantId = 1;
+  string mcpId = 2;
+  string mcpType = 3;
+  string actionName = 4;
+  bool enable = 5;
+  Identity identity = 6;
+}
+
+message AssistantMCPGetListReq {
+  string assistantId = 1;
+  Identity identity = 2;
+}
+
+message AssistantMCPInfo {
+  uint32 id = 1;
+  uint32 assistantMcpId = 2;
+  string mcpId = 3;
+  bool enable = 4;
+  string userId = 5;
+  string orgId = 6;
+  int64 createdAt = 7;
+  int64 updatedAt = 8;
+}
+
+message AssistantMCPList {
+  repeated AssistantMCPInfo assistantMCPInfos = 1;
+}
+
+message AssistantToolDeleteByToolIdReq {
+  string toolId = 1;
+  string toolType = 2;
+  Identity identity = 3;
+}
+
+message AssistantSkillCreateReq {
+  string assistantId = 1;
+  string skillId = 2;
+  string skillType = 3;
+  Identity identity = 4;
+}
+
+message AssistantSkillDeleteReq {
+  string assistantId = 1;
+  string skillId = 2;
+  string skillType = 3;
+  Identity identity = 4;
+}
+
+message AssistantSkillEnableSwitchReq {
+  string assistantId = 1;
+  string skillId = 2;
+  string skillType = 3;
+  bool enable = 4;
+  Identity identity = 5;
+}
+
+message AssistantToolCreateReq {
+  string assistantId = 1;
+  string toolId = 2;
+  string toolType = 3;
+  string actionName = 4;
+  Identity identity = 5;
+}
+
+message AssistantToolDeleteReq {
+  string assistantId = 1;
+  string toolId = 2;
+  string toolType = 3;
+  string actionName = 4;
+}
+
+message AssistantToolEnableSwitchReq {
+  string assistantId = 1;
+  string toolId = 2;
+  string toolType = 3;
+  string actionName = 4;
+  bool enable = 5;
+  Identity identity = 6;
+}
+
+message AssistantToolConfigReq {
+  string assistantId = 1;
+  string toolId = 2;
+  string toolConfig = 3;
+  Identity identity = 4;
+}
+
+message ConversationCreateReq {
+  string assistantId = 1;
+  string prompt = 2;
+  string conversationType = 3;
+  Identity identity = 4;
+}
+
+message ConversationCreateResp {
+  string conversationId = 1;
+}
+
+message ConversationDeleteReq {
+  string conversationId = 1;
+  Identity identity = 2;
+}
+
+message ConversationIdResp {
+  string conversationId = 1;
+}
+
+message GetConversationIdByAssistantIdReq{
+  string assistantId = 1;
+  string conversationType = 2;
+  Identity identity = 3;
+}
+
+message ClearConversationESReq{
+  string conversationId = 1;
+  Identity identity = 2;
+  string detailId = 3; // 可选，传值则删除单条对话详情，不传则清空该对话下所有详情
+}
+
+message GetConversationListReq {
+  string assistantId = 1;
+  string conversationType = 2;
+  int32 pageSize = 3;
+  int32 pageNo = 4;
+  Identity identity = 5;
+}
+
+message GetConversationListResp {
+  repeated ConversationInfo data = 1;
+  int64 total = 2;
+  int32 pageSize = 3;
+  int32 pageNo = 4;
+}
+
+message ConversationInfo{
+  string conversationId = 1;
+  string assistantId = 2;
+  string title = 3;
+  int64 createdAt = 4;
+}
+
+message GetConversationDetailListReq {
+  string conversationId = 1;
+  int32 pageSize = 2;
+  int32 pageNo = 3;
+  Identity identity = 4;
+}
+
+message GetConversationDetailListResp {
+  repeated ConversionDetailInfo data = 1;
+  int64 total = 2;
+  int32 pageSize = 3;
+  int32 pageNo = 4;
+}
+
+message ConversationResponse {
+  string response = 1;
+  int32 order = 2;
+  string errResponse = 3;// 错误响应,用户可读
+  string errMessage = 4;// 错误信息，异常栈信息
+}
+
+message ConversionDetailInfo{
+  string id = 1;
+  string assistantId = 2;
+  string conversationId = 3;
+  string prompt = 4;
+  string sysPrompt = 5;
+  string algPrompt = 6;
+  repeated RequestFile requestFiles = 7;
+  string response = 8;
+  string searchList = 9;
+  int32 qaType = 10;
+  string createdBy = 11;
+  int64 createdAt = 12;
+  int64 updatedAt = 13;
+  string fileName = 14;
+  string fileFormat = 15;
+  int64 fileSize = 16;
+  repeated SubConversation SubConversationList = 17;//子会话相关
+  repeated ConversationResponse ConversationResponse = 18;//主会话详情
+  repeated AgentFile responseFiles = 19;//响应文件列表
+}
+
+message SubConversation {
+  string response = 1;
+  string searchList = 2;
+  string id = 3; //事件id
+  string name = 4; //事件名称
+  string profile = 5;//事件头像
+  string timeCost = 6;//耗时
+  int32 status = 7;//1:成功，2：失败
+  string conversationType = 8;//subAgent：子智能体；agentTool：主智能体工具；subAgentTool：子智能体工具
+  string parentId = 9;//需要挂载的id，为子智能体工具扩展
+  int32 order = 10;//顺序
+  string errMessage = 11;//错误消息
+}
+
+message RequestFile {
+  string FileName = 1;
+  int64 FileSize = 2;
+  string FileUrl = 3;
+}
+
+message AgentMeta {
+  string desc = 1;
+  string createAt = 2;
+  string name = 3;
+}
+
+message AgentFile {
+  string name = 1;
+  int32 size = 2;
+  string fileUrl = 3;
+  string fileType = 4;
+  AgentMeta metadata = 5;
+}
+
+message AssistantConversionStreamReq {
+  string assistantId = 1;
+  string conversationId = 2;
+  repeated ConversionStreamFile fileInfo = 3;
+  string prompt = 4;
+  string systemPrompt = 5;
+  bool draft = 6;
+  Identity identity = 7;
+  string detailId = 8;
+}
+
+message MultiAssistantConversionStreamReq {
+  string assistantId = 1;
+  string conversationId = 2;
+  repeated ConversionStreamFile fileInfo = 3;
+  string prompt = 4;
+  string systemPrompt = 5;
+  bool draft = 6;
+  Identity identity = 7;
+  string detailId = 8;
+}
+
+message ConversionStreamFile{
+  string fileName = 1;
+  int64 fileSize = 2;
+  string fileUrl = 3;
+}
+
+message AssistantWorkFlowDeleteByWorkflowIdReq {
+  string workflowId = 1;
+  Identity identity = 2;
+}
+
+message CustomPromptCreateReq {
+  string avatarPath = 1;
+  string name = 2;
+  string desc = 3;
+  string prompt = 4;
+  Identity identity = 5;
+}
+
+message CustomPromptIDResp {
+  string customPromptId = 1;
+}
+
+message CustomPromptDeleteReq {
+  string customPromptId = 1;
+  Identity identity = 2;
+}
+
+message CustomPromptUpdateReq {
+  string customPromptId = 1;
+  string avatarPath = 2;
+  string name = 3;
+  string desc = 4;
+  string prompt = 5;
+  Identity identity = 6;
+}
+
+message CustomPromptGetReq {
+  string customPromptId = 1;
+  Identity identity = 2;
+}
+
+message CustomPromptInfo {
+  string customPromptId = 1;
+  string avatarPath = 2;
+  string name = 3;
+  string desc = 4;
+  string prompt = 5;
+  int64 updatedAt = 6;
+  Identity identity = 7;
+}
+
+message CustomPromptGetListReq {
+  string name = 1;
+  Identity identity = 2;
+}
+
+message CustomPromptList {
+  repeated CustomPromptInfo customPromptInfos = 1;
+  int64 total = 2;
+}
+
+message CustomPromptCopyReq {
+  string customPromptId = 1;
+  Identity identity = 2;
+}
+
+message AssistantDetailResp {
+  AgentDetail agentDetail = 1;
+}
+
+message MultiAssistantDetailResp {
+  AgentDetail multiAgent = 1; //多智能体详情
+  repeated AgentDetail subAgents = 2;//子智能体详情
+}
+
+message AgentDetail {
+  string input = 1;
+  bool stream = 2;
+  repeated string uploadFile = 3;
+  AgentBaseParams agentBaseParams = 4; //智能体基础参数
+  ModelParams modelParams = 5; //模型参数
+  string knowledgeParams = 6; //知识参数,使用方需要自己反序列化
+  ToolParams toolParams = 7;//工具参数
+  SkillParams skillParams = 8;//技能参数
+}
+
+// 基础参数
+message AgentBaseParams {
+  string description = 1;      // 智能体描述
+  string instruction = 2;      // 智能体系统提示词
+  string name = 3;             // 智能体名称
+  string avatar = 4;              //智能体图像url
+  string agentId = 5;          //智能体唯一id
+}
+
+// 模型参数
+message ModelParams {
+  string modelId = 1;
+  int32 maxHistory = 2;
+  optional double temperature = 3;//温度
+  optional double topP = 4; //topP
+  optional double frequencyPenalty = 5; //频率惩罚
+  optional double presencePenalty = 6;//存在惩罚
+  optional int32 maxTokens = 7;//模型输出最大token数，这个字段暂时不设置，因为模型可能触发接口调用不确定是否会超，先不传
+  repeated ConversionHistory history = 8; //聊天历史
+  optional int32 enableThinking = 9;//是否开启思考过程
+}
+
+message ConversionHistory {
+  string query = 1;
+  string response = 2;
+  repeated string uploadFileUrl = 3;
+}
+
+message MultiAgentCreateReq{
+  string assistantId = 1;
+  string agentId = 2;
+  Identity identity = 3;
+}
+message ToolParams {
+  repeated PluginToolInfo pluginToolList = 1;//工具参数,数据结构比较复杂，使用方自己反序列化
+  repeated MCPToolInfo mcpToolList = 2;//mcp参数
+}
+
+message PluginToolInfo {
+  string avatar = 1;//头像
+  string pluginTool = 2;//工具信息
+  string name = 3;//工具名称
+  int32 toolType = 4;//工具类型0:插件工具，1:工作流
+}
+
+message MCPToolInfo {
+  string url = 1;                    // MCP服务URL
+  string transport = 2;              // 传输协议/方式
+
+  // MCP工具方法列表，会根据此方法名的列表进行mcp方法的过滤
+  // 如果此列为空，则表示不进行过滤
+  repeated string toolNameList = 3;
+  string avatar = 4;//头像
+  common.ApiAuthWebRequest apiAuth = 5; // api身份认证
+  map<string, string> headers = 6; // 请求头
+}
+
+message SkillParams {
+  repeated SkillInfo skillList = 1;
+}
+
+message SkillInfo {
+  string skillId = 1;
+  string skillType = 2;
+  string name = 3;
+  string desc = 4;
+  string avatar = 5;
+  string objectPath = 6;
+  repeated SkillVariable variables = 7; // 技能自定义变量，将注入到 sandbox bash 子进程 env
+}
+
+// SkillVariable 注意：variableValue 字段仅允许沿 "assistant-svc → agent-svc → sandbox" 流动，
+// 不得进入回流 LLM 的上下文（system prompt / SKILL.md / 日志 / 错误信息 / SSE 帧）。
+// gRPC 拦截器若 dump request body 需要做 redaction。
+message SkillVariable {
+  string name          = 1; // 变量人类可读名（仅供 SKILL.md key/name/desc 展示用）
+  string desc          = 2; // 变量描述（仅供 SKILL.md key/name/desc 展示用）
+  string variableKey   = 3; // 环境变量名（受白名单正则 + 黑名单约束）
+  string variableValue = 4; // 变量值（敏感）
+}
+
+
+message MultiAgentEnableSwitchReq{
+  string assistantId = 1;
+  string agentId = 2;
+  bool enable = 3;
+  Identity identity = 4;
+}
+
+message MultiAgentConfigUpdateReq{
+  string assistantId = 1;
+  string agentId = 2;
+  string desc = 3;
+  Identity identity = 4;
+}
+
+message AssistantBrief{
+  common.AppBrief info = 1;
+  int32 category = 2;
+  string uuid = 3; // 智能体唯一标识，供 OpenAPI 使用
+}
+
+
+// --- wga conversation messages ---
+
+message WgaConversationCreateReq {
+  string prompt = 1;
+  common.AppModelConfig modelConfig = 2;
+  Identity identity = 3;
+}
+
+message WgaConversationCreateResp {
+  string threadId = 1;
+}
+
+message WgaConversationDeleteReq {
+  string threadId = 1;
+  Identity identity = 2;
+}
+
+message WgaConversationListReq {
+  int32 pageSize = 1;
+  int32 pageNo = 2;
+  Identity identity = 3;
+}
+
+message WgaConversationListResp {
+  repeated WgaConversationInfo data = 1;
+  int64 total = 2;
+  int32 pageSize = 3;
+  int32 pageNo = 4;
+}
+
+message WgaConversationInfo {
+  string threadId = 1;
+  string title = 2;
+  int64 createdAt = 3;
+}
+
+message WgaConversationExistsReq {
+  string threadId = 1;
+  Identity identity = 2;
+}
+
+message WgaConversationExistsResp {
+  bool exists = 1;
+}
+
+// --- wga config messages ---
+
+message WgaConfigTool {
+  string toolId = 1;
+  string toolType = 2;
+}
+
+message WgaConfigAssistant {
+  string assistantId = 1;
+  string assistantType = 2;
+}
+
+message WgaConfigMcp {
+  string mcpId = 1;
+  string mcpType = 2;
+}
+
+message WgaConfigWorkflow {
+  string workflowId = 1;
+}
+
+message WgaConfigSkill {
+  string skillId = 1;
+  string skillType = 2;
+}
+
+message WgaConfigKnowledge {
+  string knowledgeId = 1;
+}
+
+message WgaConfigOntologyKnowledge {
+  string ontologyKnowledgeId = 1;
+}
+
+message WgaConversationConfig {
+  string threadId = 1;
+  string title = 2;
+  common.AppModelConfig modelConfig = 3;
+  string userId = 4;
+  string orgId = 5;
+  int64 createdAt = 6;
+  int64 updatedAt = 7;
+}
+
+message WgaConfig{
+  string userId = 1;
+  string orgId = 2;
+  int64 createdAt = 3;
+  int64 updatedAt = 4;
+  repeated WgaConfigTool toolList = 5;
+  repeated WgaConfigAssistant assistantList = 6;
+  repeated WgaConfigMcp mcpList = 7;
+  repeated WgaConfigWorkflow workflowList = 8;
+  repeated WgaConfigSkill skillList = 9;
+  repeated WgaConfigKnowledge knowledgeList = 10;
+  repeated WgaConfigOntologyKnowledge ontologyKnowledgeList = 11;
+}
+
+message GetWgaConversationConfigReq {
+  string threadId = 1;
+  Identity identity = 2;
+}
+
+message GetWgaConversationConfigResp {
+  WgaConversationConfig config = 1;
+}
+
+message UpdateWgaConversationConfigReq {
+  string threadId = 1;
+  common.AppModelConfig modelConfig = 2;
+  Identity identity = 3;
+}
+
+message GetWgaConfigReq {
+  Identity identity = 1;
+}
+
+message GetWgaConfigResp {
+  WgaConfig config = 1;
+}
+
+message UpdateWgaConfigReq {
+  Identity identity = 1;
+  repeated WgaConfigTool toolList = 2;
+  repeated WgaConfigAssistant assistantList = 3;
+  repeated WgaConfigMcp mcpList = 4;
+  repeated WgaConfigWorkflow workflowList = 5;
+  repeated WgaConfigSkill skillList = 6;
+  repeated WgaConfigKnowledge knowledgeList = 7;
+  repeated WgaConfigOntologyKnowledge ontologyKnowledgeList = 8;
+}

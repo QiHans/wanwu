@@ -1,0 +1,3 @@
+*.vue linguist-language=golang
+*.sh text eol=lf
+*.bat text eol=crlf

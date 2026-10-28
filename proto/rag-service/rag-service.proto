@@ -1,0 +1,267 @@
+syntax = "proto3";
+
+package rag_service;
+
+import "google/protobuf/empty.proto";
+import "proto/common/common.proto";
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/rag-service";
+
+service RagService {
+  // 流式对话
+  rpc ChatRag(ChatRagReq) returns (stream ChatRagResp) {}
+  // 创建 rag
+  rpc CreateRag(CreateRagReq) returns (CreateRagResp) {}
+  // 更新 rag 基本信息
+  rpc UpdateRag(UpdateRagReq) returns (google.protobuf.Empty) {}
+  // 更新 rag 配置信息
+  rpc UpdateRagConfig(UpdateRagConfigReq) returns (google.protobuf.Empty) {}
+  // 删除 rag
+  rpc DeleteRag(RagDeleteReq) returns (google.protobuf.Empty) {}
+  // 获取 rag
+  rpc GetRagDetail(RagDetailReq) returns (RagInfo) {}
+  // 获取 rag 列表
+  rpc ListRag(RagListReq) returns (RagListResp) {}
+  // 根据 ragIds 获取 rag 列表
+  rpc GetRagByIds(GetRagByIdsReq) returns (AppBriefList) {}
+  // 复制 rag
+  rpc CopyRag(CopyRagReq) returns (CreateRagResp) {}
+  // 发布 rag
+  rpc PublishRag(PublishRagReq) returns (google.protobuf.Empty) {}
+  // 编辑发布后rag的版本描述
+  rpc UpdatePublishRag(UpdatePublishRagReq) returns (google.protobuf.Empty) {}
+  // 历史版本列表
+  rpc ListPublishRagHistory(ListPublishRagHistoryReq) returns (ListPublishRagHistoryResp) {}
+  // 覆盖当前草稿
+  rpc OverwriteRagDraft(OverwriteRagDraftReq) returns (google.protobuf.Empty) {}
+  // 返回最新版本描述
+  rpc GetPublishRagDesc(GetPublishRagDescReq) returns (GetPublishRagDescResp) {}
+  // 批量返回最新版本描述
+  rpc GetPublishRagDescBatch(GetPublishRagDescBatchReq) returns (GetPublishRagDescBatchResp) {}
+}
+message Identity {
+  string userId = 1;
+  string orgId = 2;
+}
+
+message ChatRagReq {
+  string ragId = 1;
+  string question = 2;
+  Identity identity = 3;
+  repeated HistoryItem history = 4;
+  int32 publish = 5; // 0: 草稿 1: 已发布
+  repeated FileInfo fileInfoList = 6; //上传文档列表
+}
+
+message FileInfo {
+  string fileName = 1; // 文件id
+  int64 fileSize = 2; // 文件大小
+  string fileUrl = 3; // 文件url
+}
+
+message HistoryItem {
+  string query = 1;
+  string response = 2;
+  bool needHistory = 3;
+}
+
+message ChatRagResp {
+  string content = 1;
+}
+
+message UpdateRagReq{
+  string ragId = 1;
+  common.AppBriefConfig appBrief = 2;
+  Identity identity = 3;
+}
+
+message UpdateRagConfigReq{
+  string ragId = 1;
+  common.AppModelConfig modelConfig = 2;                  // 模型
+  common.AppModelConfig rerankConfig = 3;                 // 知识库Rerank模型
+  common.AppModelConfig QArerankConfig = 4; // 问答库rerank模型
+  RagKnowledgeBaseConfig knowledgeBaseConfig = 5;         // 知识库配置
+  RagQAKnowledgeBaseConfig QAknowledgeBaseConfig = 6; // 问答库配置
+  RagSensitiveConfig sensitiveConfig = 7;                 // 安全护栏
+  RagVisionConfig visionConfig = 8; // 视觉配置
+  repeated string recommendQuestion = 9; // 推荐问题
+}
+
+message RagVisionConfig{
+  int32 picNum = 1;
+}
+
+message CreateRagReq {
+  common.AppBriefConfig appBrief = 1;
+  Identity identity = 2;
+}
+
+message CreateRagResp {
+  string ragId = 1;
+}
+
+message RagInfo {
+  string ragId = 1;
+  common.AppBriefConfig briefConfig = 2;
+  common.AppModelConfig modelConfig = 3;                  // 模型
+  common.AppModelConfig rerankConfig = 4;                 // Rerank模型
+  common.AppModelConfig QArerankConfig = 5; // 问答库rerank模型
+  RagKnowledgeBaseConfig knowledgeBaseConfig = 6;         // 知识库
+  RagQAKnowledgeBaseConfig QAknowledgeBaseConfig = 7; // 问答库配置
+  RagSensitiveConfig sensitiveConfig = 8; // 安全护栏
+  RagVisionConfig visionConfig = 9; // 视觉配置
+  Identity identity = 10;
+  repeated string recommendQuestion = 11; // 推荐问题
+}
+
+message RagDeleteReq {
+  string ragId = 1;
+}
+
+message RagDetailReq {
+  string ragId = 1;
+  int32 publish = 2; // 0: 草稿 1: 已发布
+  string version = 3; // 已发布版本
+}
+
+message RagKnowledgeBaseConfig {
+  repeated RagPerKnowledgeConfig perKnowledgeConfigs = 1;
+  RagGlobalConfig globalConfig = 2;
+}
+
+message RagQAKnowledgeBaseConfig {
+  repeated RagPerQAKnowledgeConfig perKnowledgeConfigs = 1;
+  RagQAGlobalConfig globalConfig = 2;
+}
+
+message RagQAGlobalConfig{
+  int32 maxHistory = 1;                           // 最长上下文
+  float threshold = 2;                            // 过滤阈值
+  int32 topK = 3;                                 // topK
+  string matchType = 4; //matchType：vector（向量检索）、text（文本检索）、mix（混合检索：向量+文本）
+  float keywordPriority = 5;// 关键词权重
+  int32 priorityMatch = 6;// 权重匹配，只有在混合检索模式下，选择权重设置后，这个才设置为1
+  float semanticsPriority = 7;// 语义权重
+}
+
+message RagPerQAKnowledgeConfig{
+  string knowledgeId = 1;
+  RagMetaFilter ragMetaFilter = 2; // 元数据
+}
+
+
+message RagPerKnowledgeConfig{
+  string knowledgeId = 1;
+  int32 graphSwitch = 2; // 知识图谱
+  RagMetaFilter ragMetaFilter = 3; // 元数据
+}
+
+message RagMetaFilter{
+  bool filterEnable = 1;
+  string filterLogicType = 2;
+  repeated RagMetaFilterItem filterItems = 3;
+}
+
+message RagMetaFilterItem{
+  string key = 1;
+  string type = 2;
+  string value = 3;
+  string condition = 4;
+}
+
+message RagGlobalConfig{
+  int32 maxHistory = 1;                           // 最长上下文
+  float threshold = 2;                            // 过滤阈值
+  int32 topK = 3;                                 // topK
+  string matchType = 4; //matchType：vector（向量检索）、text（文本检索）、mix（混合检索：向量+文本）
+  float keywordPriority = 5;// 关键词权重
+  int32 priorityMatch = 6;// 权重匹配，只有在混合检索模式下，选择权重设置后，这个才设置为1
+  float semanticsPriority = 7;// 语义权重
+  float termWeight = 8; // 关键词系数，默认为1
+  bool termWeightEnable = 9; // 关键词系数开关
+  bool useGraph = 10; // 知识图谱开关
+}
+
+message RagSensitiveConfig{
+  bool enable = 1; // 是否启用安全护栏
+  repeated string tableIds = 2; // 敏感词表id
+}
+
+message RagListReq {
+  string name = 1;
+  Identity identity = 2;
+}
+
+message RagListResp {
+  repeated common.AppBrief ragInfos = 1;
+  int64 total = 2;
+}
+
+message GetRagByIdsReq{
+  repeated string ragIdList = 1;
+}
+
+message AppBriefList{
+  repeated common.AppBrief ragInfos = 1;
+}
+
+message CopyRagReq{
+  string ragId = 1;
+  Identity identity = 2;
+}
+
+message PublishRagReq{
+  string ragId = 1;
+  string version = 2;
+  string desc = 3;
+  Identity identity = 4;
+}
+
+message UpdatePublishRagReq{
+  string ragId = 1;
+  string desc = 2;
+  Identity identity = 3;
+}
+
+message ListPublishRagHistoryReq{
+  string ragId = 1;
+  Identity identity = 2;
+}
+
+message ListPublishRagHistoryResp{
+  repeated PublishRagHistory historyList = 1;
+  int64 total = 2;
+}
+
+message PublishRagHistory{
+  string ragId = 1;
+  string version = 2;
+  string desc = 3;
+  int64 createAt = 4;
+}
+
+message OverwriteRagDraftReq{
+  string ragId = 1;
+  string version = 2;
+}
+
+message GetPublishRagDescReq{
+  string ragId = 1;
+  Identity identity = 2;
+}
+
+message GetPublishRagDescResp{
+  string ragId = 1;
+  string version = 2;
+  string desc = 3;
+  int64 createAt = 4;
+}
+
+message GetPublishRagDescBatchReq{
+  repeated string ragIdList = 1;
+  Identity identity = 2;
+}
+
+message GetPublishRagDescBatchResp{
+  repeated GetPublishRagDescResp list = 1;
+}

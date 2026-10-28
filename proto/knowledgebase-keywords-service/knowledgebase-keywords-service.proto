@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package knowledgebase_keywords_service;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitlab.ai-yuanjing.cn/ai-platform-private/backend-used-bff/common-api/api/proto/knowledgebase-keywords-service";
+
+service KnowledgeBaseKeywordsService {
+  // 查询知识库关键词列表
+  rpc GetKnowledgeKeywordsList(GetKnowledgeKeywordsListReq) returns (GetKnowledgeKeywordsListResp) {}
+  // 查询知识库关键词详情
+  rpc GetKnowledgeKeywordsDetail(GetKnowledgeKeywordsDetailReq) returns (GetKnowledgeKeywordsDetailResp) {}
+  // 新增知识库关键词
+  rpc CreateKnowledgeKeywords(CreateKnowledgeKeywordsReq) returns (google.protobuf.Empty) {}
+  // 编辑知识库关键词
+  rpc UpdateKnowledgeKeywords(UpdateKnowledgeKeywordsReq) returns (google.protobuf.Empty) {}
+  // 删除知识库关键词
+  rpc DeleteKnowledgeKeywords(DeleteKnowledgeKeywordsReq) returns (google.protobuf.Empty) {}
+}
+
+message Identity {
+  string userId = 1;
+  string orgId = 2;
+}
+
+message GetKnowledgeKeywordsListReq{
+  int32 pageSize = 1;
+  int32 pageNum = 2;
+  string name = 3; // 用于搜索【问题中的关键词】/【文档中的词语】
+  Identity identity = 4;
+}
+
+message GetKnowledgeKeywordsListResp {
+  repeated KeywordsInfo keywords = 1;
+  int64 total = 2;
+  int32 pageNum = 3;
+  int32 pageSize = 4;
+}
+
+message KeywordsInfo {
+  uint32 id = 1;
+  string name = 2;
+  string alias = 3;
+  repeated string knowledgeBaseIds =4;
+  repeated string knowledgeBaseNames =5;
+  string updatedAt = 6;
+}
+
+message CreateKnowledgeKeywordsReq{
+  string name = 1;
+  string alias = 2;
+  repeated string knowledgeBaseIds = 3;
+  Identity identity = 4;
+}
+
+message GetKnowledgeKeywordsDetailReq{
+  uint32 id = 1;
+  Identity identity = 2;
+}
+
+message GetKnowledgeKeywordsDetailResp{
+  KeywordsInfo detail = 1;
+}
+
+message UpdateKnowledgeKeywordsReq{
+  uint32 id = 1;
+  CreateKnowledgeKeywordsReq detail = 2;
+}
+
+message DeleteKnowledgeKeywordsReq{
+  uint32 id = 1;
+}

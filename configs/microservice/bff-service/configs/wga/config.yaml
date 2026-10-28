@@ -1,0 +1,68 @@
+agentId: Supervisor Agent
+humanInTheLoop: true
+configPath: configs/microservice/bff-service/configs/wga/config.yaml
+
+# 可加载的全部智能体配置
+agents:
+  - relative_path: ./agents/Supervisor/config.yaml
+  - relative_path: ./agents/DeepResearch/config.yaml
+  - relative_path: ./agents/MultiModal/config.yaml
+  - relative_path: ./agents/General/config.yaml
+  - relative_path: ./agents/PPT/config.yaml
+  - relative_path: ./agents/HTML/config.yaml
+  - relative_path: ./agents/DataAnalysis/config.yaml
+  - relative_path: ./agents/Excel/config.yaml
+  - relative_path: ./agents/SkillChat/config.yaml
+  - relative_path: ./agents/SkillImport/config.yaml
+  - relative_path: ./agents/SkillPreview/config.yaml
+  - relative_path: ./agents/Ontology/config.yaml
+
+# 给前端展示的子智能体（与可加载的智能体配置不完全对应，前端展示的智能体可以是可加载智能体的组合）
+sub_agents:
+  - agent_id: "Skill Chat Agent"
+    agent_name: "创建Skill"
+    avatar_path: /v1/static/agent/skill.png
+    placeholder: "选择一款模型，告诉我需要创建的skill或直接导入外部skill，也可@相关应用快速创建skill"
+  - agent_id: "Deep Research Agent"
+    agent_name: "深度研究"
+    avatar_path: /v1/static/agent/research.png
+    placeholder: "选择一款模型，告诉我想要研究的内容，获取研究报告"
+  - agent_id: "Data Analysis Agent"
+    agent_name: "数据分析"
+    avatar_path: /v1/static/agent/analysis.png
+    placeholder: "选择一款模型，上传excel或csv文件，进行数据分析"
+  - agent_id: "PPT Agent"
+    agent_name: "创建PPT"
+    avatar_path: /v1/static/agent/ppt.png
+    placeholder: "选择一款模型，告诉我想要生成的PPT主题或内容"
+  - agent_id: "Excel Agent"
+    agent_name: "创建EXCEL"
+    avatar_path: /v1/static/agent/excel.png
+    placeholder: "选择一款模型，告诉我想要生成的EXCEL主题或内容"
+  - agent_id: "Html Agent"
+    agent_name: "创建网页"
+    avatar_path: /v1/static/agent/web.png
+    placeholder: "选择一款模型，告诉我想要生成的网页主题或内容"
+  - agent_id: "DIP Agent"
+    agent_name: "数字员工"
+    avatar_path: /v1/static/agent/ontology.svg
+    placeholder: "@你需要的数字员工，发送任务指令给它，让数字员工开始为你工作吧"
+
+persistent:
+  enabled: true
+  base_dir: /shared/data/wga/bff/versioned
+  skill_base_dir: /shared/data/wga/bff/overwrite
+  mode: versioned
+
+upload_limit:
+  image_types: "jpg;jpeg;png;gif;webp;bmp"
+  file_types: "zip;pdf;docx;xlsx;pptx;txt;csv;md;json;xml;html;htm;yaml;yml;jsonc;ini;toml;log;env;conf"
+  # videoTypes: "mp4;avi;mov;mkv;flv;wmv"
+  # audioTypes: "mp3;wav;flac;aac;ogg;m4a"
+  # archiveTypes: "zip;rar;7z;tar;gz;bz2;xz"
+  # codeTypes: "go;py;js;jsx;ts;tsx;java;c;cpp;cc;h;hpp;rs;rb;cs;php;sh;bash;zsh;sql;dart;kotlin;swift"
+  max_image_size: 1
+  max_file_size: 1
+  # max_video_size: 0
+  # max_audio_size: 0
+  # maxCodeSize: 1

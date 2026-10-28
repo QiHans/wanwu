@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package perm_service;
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/perm-service";
+
+service PermService {
+  // 检查用户状态
+  rpc CheckUserEnable(CheckUserEnableReq) returns (CheckUserEnableResp) {}
+  // 检查用户权限
+  rpc CheckUserPerm(CheckUserPermReq) returns (CheckUserPermResp) {}
+}
+
+message CheckUserEnableReq {
+  string userId = 1;
+  string genTokenAt = 2;
+}
+
+message CheckUserEnableResp {
+  string language = 1;
+  int64 lastUpdatePasswordAt = 2;
+}
+
+message CheckUserPermReq {
+  string userId = 1;
+  string genTokenAt = 2;
+  string orgId = 3;
+  repeated string oneOfPerms = 4;
+}
+
+message CheckUserPermResp {
+  bool isAdmin = 1;
+  bool isSystem = 2;
+  string language = 3;
+  int64 lastUpdatePasswordAt = 4;
+}

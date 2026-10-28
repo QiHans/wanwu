@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+package safety_service;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/safety-service";
+
+service SafetyService {
+  // --- safety ---
+  // 敏感词表相关
+  // 创建敏感词表
+  rpc CreateSensitiveWordTable(CreateSensitiveWordTableReq) returns (CreateSensitiveWordTableResp) {}
+  // 编辑敏感词表
+  rpc UpdateSensitiveWordTable(UpdateSensitiveWordTableReq) returns (google.protobuf.Empty) {}
+  // 编辑敏感词表回复设置
+  rpc UpdateSensitiveWordTableReply(UpdateSensitiveWordTableReplyReq) returns (google.protobuf.Empty) {}
+  // 删除敏感词表
+  rpc DeleteSensitiveWordTable(DeleteSensitiveWordTableReq) returns (google.protobuf.Empty) {}
+  // 获取敏感词表列表
+  rpc GetSensitiveWordTableList(GetSensitiveWordTableListReq) returns (SensitiveWordTables) {}
+  // 通过敏感词表id列表获取敏感词表信息
+  rpc GetSensitiveWordTableListByIDs(GetSensitiveWordTableListByIDsReq) returns (SensitiveWordTables){}
+  // 通过敏感词表id获取敏感词表信息
+  rpc GetSensitiveWordTableByID(GetSensitiveWordTableByIDReq) returns (SensitiveWordTable){}
+  // 获取全局敏感词表列表
+  rpc GetGlobalSensitiveWordTableList(google.protobuf.Empty) returns (SensitiveWordTables) {}
+
+  // 敏感词相关
+  // 上传敏感词
+  rpc UploadSensitiveVocabulary(UploadSensitiveVocabularyReq) returns (google.protobuf.Empty) {}
+  // 删除敏感词
+  rpc DeleteSensitiveVocabulary(DeleteSensitiveVocabularyReq) returns (google.protobuf.Empty) {}
+  // 获取敏感词列表
+  rpc GetSensitiveVocabularyList(GetSensitiveVocabularyListReq) returns (SensitiveWordVocabularyResp) {}
+  // 获取多个敏感词表详细数据(带敏感词)
+  rpc GetSensitiveWordTableListWithWordsByIDs(GetSensitiveWordTableListByIDsReq) returns (SensitiveWordTableListWithWords) {}
+}
+
+message CreateSensitiveWordTableReq {
+  string orgId = 1;
+  string userId = 2;
+  string tableName = 3; // 敏感词表名
+  string remark = 4; // 备注
+  string tableType = 5; // 敏感词表类型
+}
+
+message UpdateSensitiveWordTableReq {
+  string orgId = 1;
+  string userId = 2;
+  string tableId = 3; // 敏感词表id
+  string tableName = 4;
+  string remark = 5; // 备注
+}
+
+message UpdateSensitiveWordTableReplyReq {
+  string orgId = 1;
+  string userId = 2;
+  string tableId = 3; // 敏感词表id
+  string Reply = 4; // 回复设置
+}
+
+message DeleteSensitiveWordTableReq {
+  string tableId = 1; // 敏感词表id
+}
+
+message GetSensitiveWordTableListReq {
+  string orgId = 1;
+  string userId = 2;
+  string tableType = 3; // 敏感词表类型
+}
+
+message UploadSensitiveVocabularyReq {
+  string orgId = 1;
+  string userId = 2;
+  string importType = 3; // 上传类型
+  string word = 4; // 敏感词
+  string sensitiveType = 5; // 敏感词类型
+  string tableId = 6; // 敏感词表id
+  string filePath = 7; // 文件路径
+}
+
+message DeleteSensitiveVocabularyReq {
+  string tableId = 1; // 敏感词表id
+  string wordId = 2; // 敏感词id
+}
+
+message GetSensitiveVocabularyListReq {
+  string orgId = 1;
+  string userId = 2;
+  string tableId = 3; // 敏感词表id
+  int32 pageNo = 4;
+  int32 pageSize = 5;
+}
+
+message GetSensitiveWordTableListByIDsReq {
+  repeated string tableIds = 1; // 敏感词表id
+}
+
+message GetSensitiveWordTableByIDReq {
+  string tableId = 1; // 敏感词表id
+}
+
+message CreateSensitiveWordTableResp {
+  string tableId = 1; // 敏感词表id
+}
+
+message SensitiveWordTables {
+  repeated SensitiveWordTable list = 1;
+  int64 total = 2;
+}
+
+message SensitiveWordTable {
+  string tableId = 1;
+  string tableName = 2;
+  string remark = 3;
+  string reply = 4;
+  string version = 5;
+  int64  createdAt = 6;
+  string tableType = 7; // 敏感词表类型
+}
+
+message SensitiveWordVocabularyResp {
+  repeated SensitiveWordVocabulary list = 1;
+  int64 total = 2;
+  int32 pageNo = 3;
+  int32 pageSize = 4;
+}
+
+message SensitiveWordVocabulary {
+  string wordId = 1;
+  string word = 2; // 敏感词
+  string sensitiveType = 3; // 敏感词类型
+}
+
+message SensitiveWordTableListWithWords {
+  repeated SensitiveWordTableWithWords details = 1; // 敏感词表带version数据
+}
+
+message SensitiveWordTableWithWords {
+  SensitiveWordTable table = 1;
+  repeated string sensitiveWords = 2;
+}

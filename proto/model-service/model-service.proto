@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package model_service;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/model-service";
+
+service ModelService {
+
+    // --- model ---
+
+    // 模型导入
+    rpc ImportModel(ModelInfo) returns (google.protobuf.Empty) {}
+    // 导入模型更新
+    rpc UpdateModel(ModelInfo) returns (google.protobuf.Empty) {}
+    // 导入模型删除
+    rpc DeleteModel(DeleteModelReq) returns (google.protobuf.Empty) {}
+    // 模型启用/关闭
+    rpc ChangeModelStatus(ModelStatusReq) returns (google.protobuf.Empty) {}
+    // ‌查询单个模型‌
+    rpc GetModel(GetModelReq) returns (ModelInfo) {}
+    // 根据uuid获取modelId
+    rpc GetModelByUuid(GetModelByUuidReq) returns (ModelInfo) {}
+    // 根据uuids查询modelId列表
+    rpc ListModelsByUuids(ListModelsByUuidsReq) returns (ModelInfos) {}
+    // 导入模型列表展示
+    rpc ListModels(ListModelsReq) returns (ModelInfos) {}
+    // 根据模型ID列表查询
+    rpc ListModelsByIds(ListModelsByIdsReq) returns (ModelInfos) {}
+    // llm/rerank/embedding模型列表展示
+    rpc ListTypeModels(ListTypeModelsReq) returns (ModelInfos) {}
+    // 统计看板：按 orgIds/userIds 批量查询模型（org_id IN + user_id IN，单次查询）
+    rpc ListModelsInStatisticScope(ListModelsInStatisticScopeReq) returns (ModelInfos) {}
+
+    // --- model experience ---
+
+    // 保存模型体验对话（创建/更新）
+    rpc SaveModelExperienceDialog(SaveModelExperienceDialogReq) returns (ModelExperienceDialog) {}
+    // 获取模型体验对话
+    rpc GetModelExperienceDialog(ModelExperienceDialogReq) returns (ModelExperienceDialog) {}
+    // 获取模型体验对话列表
+    rpc GetModelExperienceDialogs(ListModelExperienceDialogReq) returns (ModelExperienceDialogs) {}
+    // 删除模型体验对话
+    rpc DeleteModelExperienceDialog(ModelExperienceDialogReq) returns (google.protobuf.Empty) {}
+    
+    // 保存模型体验对话记录
+    rpc SaveModelExperienceDialogRecord(SaveModelExperienceDialogRecordReq) returns (google.protobuf.Empty) {}
+    // 获取模型体验对话记录列表
+    rpc GetModelExperienceDialogRecords(GetModelExperienceDialogRecordsReq) returns (ModelExperienceDialogRecords) {}
+}
+
+message ModelInfo {
+    string userId = 1;
+    string orgId = 2;
+    string modelId = 3;
+    string provider = 4;        // 模型供应商
+    string modelType = 5;       // 模型类型
+    string model = 6;           // 模型名称
+    string displayName = 7;     // 模型显示名称
+    string modelIconPath = 8;   // 模型图标路径
+    string publishDate = 9;     // 模型发布时间
+    bool isActive = 10;         // 启用状态（true: 启用，false: 禁用）
+    string providerConfig = 11;
+    int64 createdAt = 12;
+    int64 updatedAt = 13;
+    string modelDesc = 14;
+    string uuid = 15;
+    string scopeType = 16;
+    string importSource = 17;  // 模型导入来源(builtin=平台内置,external=外部URL)
+}
+
+message ModelInfos {
+    repeated ModelInfo models = 1;
+    int64 total = 2;
+}
+
+message DeleteModelReq {
+    string userId = 1;
+    string orgId = 2;
+    string modelId = 3;
+}
+
+message GetModelReq{
+    string userId = 1;
+    string orgId = 2;
+    string modelId = 3;
+}
+
+message GetModelByUuidReq {
+    string uuid = 1;
+}
+
+message ListModelsByUuidsReq {
+    repeated string uuids = 3;
+}
+
+message ListModelsReq{
+    string modelType = 1;       // 模型类型
+    string provider = 2;        // 模型供应商
+    bool isActive = 3;          // 启用状态（true: 启用，false: 禁用）
+    string userId = 4;
+    string orgId = 5;
+    string displayName = 6;     // 模型显示名称
+    string filterScope = 7;     // 模型作用域类型
+    string scopeType = 8;       // 模型公开范围(1-私有 2-公开 3-组织)
+}
+
+message ModelStatusReq {
+    string modelId = 1;
+    bool isActive = 2;          // 启用状态（true: 启用，false: 禁用）
+    string userId = 3;
+    string orgId = 4;
+}
+
+message ListModelsByIdsReq{
+    string userId = 1;
+    string orgId = 2;
+    repeated string modelIds = 3;
+}
+
+message ListTypeModelsReq {
+    string userId = 1;
+    string orgId = 2;
+    string modelType = 3;       // 模型类型
+}
+
+// 统计看板模型下拉：orgIds/userIds 与统计 SQL 一致（IN + IN）
+message ListModelsInStatisticScopeReq {
+    repeated string orgIds = 1;
+    repeated string userIds = 2;
+    string modelType = 3;
+    string filterScope = 4;     // 同 ListModelsReq.filterScope，空表示不过滤公开/私有
+}
+
+// --- model experience ---
+
+message SaveModelExperienceDialogReq {
+    string userId = 1;
+    string orgId = 2;
+    string modelId = 3; // 模型
+    string sessionId = 4; // 会话 ID
+    string title = 5;
+    string modelSetting = 6; // 模型参数配置
+}
+
+message ModelExperienceDialogReq {
+    string userId = 1;
+    string orgId = 2;
+    string modelExperienceId = 3;
+}
+
+message ListModelExperienceDialogReq {
+    string userId = 1;
+    string orgId = 2;
+}
+
+message ModelExperienceDialog {
+    string modelExperienceId = 1;
+    string modelId = 2; // 模型
+    string sessionId = 3; //会话 ID
+    string title = 4;
+    string modelSetting = 5;  // 模型参数配置
+    int64 createdAt = 6;
+}
+
+message ModelExperienceDialogs {
+    repeated ModelExperienceDialog dialogs = 1;
+}
+
+message SaveModelExperienceDialogRecordReq {
+    string userId = 1;
+    string orgId = 2;
+    string modelExperienceId = 3; // 模型体验 ID
+    string modelId = 4; // 模型
+    string sessionId = 5; //会话 ID
+    string originalContent = 6; // 原始内容
+    string handledContent = 7;  // 处理后的内容
+    string reasoningContent = 8;  // 思考过程
+    string role = 9;  // 角色
+    string fileInfo = 10; // 文件信息JSON
+}
+
+message GetModelExperienceDialogRecordsReq {
+    string userId = 1;
+    string orgId = 2;
+    string modelExperienceId = 3; // 模型体验 ID
+    string sessionId = 4; //会话 ID
+}
+
+message ModelExperienceDialogRecord {
+    string userId = 1;
+    string orgId = 2;
+    string modelExperienceId = 3;     // 模型体验 ID
+    string modelId = 4;     // 模型
+    string sessionId = 5; // 会话 ID
+    string originalContent = 6; // 原始内容
+    string handledContent = 7;  // 处理后的内容
+    string reasoningContent = 8;  // 思考过程
+    string role = 9;  // 角色
+    string fileInfo = 10; // 文件信息JSON
+}
+
+message ModelExperienceDialogRecords {
+    repeated ModelExperienceDialogRecord records = 1;
+}

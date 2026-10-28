@@ -1,0 +1,104 @@
+server:
+  grpc_endpoint: 0.0.0.0:8890
+  max_recv_msg_size: 4294967296 # 1024 * 1024 * 1024 * 4 = 4G
+  callback_url: http://localhost:8088
+
+log:
+  std: true
+  level: debug
+  logs:
+    - enable: true
+      filename: log/info.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+    - enable: true
+      filename: log/err.log
+      level: error
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+
+db:
+  name: mysql # mysql | postgres | tidb | oceanbase
+  mysql:
+    address: localhost:3306
+    user: root
+    password: ""
+    database: assistant_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  postgres:
+    address: localhost:5432
+    user: postgres
+    password: ""
+    database: assistant_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  tidb:
+    address: localhost:4000
+    user: root
+    password: ""
+    database: assistant_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+  oceanbase:
+    address: localhost:2881
+    user: root@wanwu
+    password: ""
+    database: assistant_service
+    max_open_conns: 16
+    max_idle_conns: 16
+    log_mode: true
+
+redis:
+  host: localhost
+  port: 6379
+  username:
+  password: 
+  standalone: true
+  master_name: mymaster
+
+es:
+  address: localhost:9200
+  username: elastic
+  password: Wanwu123456
+
+minio:
+  endpoint: localhost:9000
+  user: root
+  password: Wanwu123456
+  bucket: agent-prod
+
+# 智能体相关接口
+assistant:
+  sse-url: "http://agent-wanwu:7258/agent"
+  new-sse-url: "http://localhost:8990/agent/chat"
+  multi-agent-chat-url: "http://localhost:8990/multi_agent/chat"
+  max_pic_num: 6
+
+knowledge:
+  host: localhost:8889
+
+mcp:
+  host: localhost:9898
+
+workflow:
+  endpoint: http://localhost:8999
+  list_schema_uri: /v1/workflow/list_schema_by_wanwu
+
+skill:
+  endpoint: http://localhost:8088
+  builtin_skill_list_uri: /callback/v1/skill/builtin/list
+  custom_skill_list_uri: /callback/v1/skill/custom/list
+  acquired_skill_list_uri: /callback/v1/skill/acquired/list
+
+# 创建智能体时自动绑定的内置工具列表
+builtin_tools:
+  - tool_id: "doc_parser"
+    tool_type: "builtin"
+    action_name: "chatdoc"

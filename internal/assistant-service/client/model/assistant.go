@@ -1,0 +1,32 @@
+package model
+
+const (
+	SingleAgent = 1
+	MultiAgent  = 2
+)
+
+type Assistant struct {
+	ID                  uint32 `gorm:"primarykey;column:id;comment:智能体Id"`
+	Category            int    `gorm:"column:category;type:tinyint(4);not null;default:1;comment:'1-单智能体，2-多智能体，3-外部智能体';" json:"category"`
+	UUID                string `gorm:"column:uuid;type:varchar(255);uniqueIndex:idx_unique_uuid;comment:智能体uuid"`
+	AvatarPath          string `gorm:"column:avatar_path;comment:智能体头像"`
+	Name                string `gorm:"column:name;comment:智能体名称"`
+	Desc                string `gorm:"column:desc;comment:智能体介绍"`
+	WebUrl              string `gorm:"column:web_url;type:varchar(500);comment:外部智能体Web URL"`
+	Source              string `gorm:"column:source;type:varchar(50);comment:外部智能体来源"`
+	Instructions        string `gorm:"column:instructions;comment:系统提示词"`
+	Prologue            string `gorm:"column:prologue;comment:开场白"`
+	RecommendQuestion   string `gorm:"column:recommend_question;comment:推荐问题列表"`
+	ModelConfig         string `gorm:"column:model_config;type:longtext;comment:模型配置"`
+	RerankConfig        string `gorm:"column:rerank_config;type:longtext;comment:rerank模型配置"`
+	KnowledgebaseConfig string `gorm:"column:knowledgebase_config;type:longtext;comment:知识库配置"`
+	SafetyConfig        string `gorm:"column:safety_config;type:longtext;comment:安全配置"`
+	VisionConfig        string `gorm:"column:vision_config;type:longtext;comment:视觉配置"`
+	MemoryConfig        string `gorm:"column:memory_config;type:longtext;comment:记忆配置"`
+	RecommendConfig     string `gorm:"column:recommend_config;type:longtext;comment:推荐问题配置"`
+	Scope               int    `gorm:"column:scope;type:tinyint;comment:智能体可见范围"`
+	UserId              string `gorm:"column:user_id;index:idx_assistant_user_id;comment:用户id"`
+	OrgId               string `gorm:"column:org_id;index:idx_assistant_org_id;comment:组织id"`
+	CreatedAt           int64  `gorm:"autoCreateTime:milli;comment:创建时间"`
+	UpdatedAt           int64  `gorm:"autoUpdateTime:milli;comment:更新时间"`
+}

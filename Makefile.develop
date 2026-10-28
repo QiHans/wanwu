@@ -1,0 +1,249 @@
+include .env
+include .env.image.${WANWU_ARCH}
+
+run-all-middleware:
+	make run-mysql & sleep 10
+	make run-mysql-setup & sleep 10
+	make run-redis & sleep 10
+	make run-minio & sleep 10
+	make run-kafka & sleep 10
+	make run-es-setup & sleep 10
+	make run-es & sleep 10
+
+stop-all-middleware:
+	make stop-es
+	make stop-es-setup
+	make stop-kafka
+	make stop-minio
+	make stop-redis
+	make stop-mysql-setup
+	make stop-mysql
+
+# --- frontend ---
+
+unzip-frontend:
+	make -f Makefile.develop unzip-frontend-aibase
+	make -f Makefile.develop unzip-frontend-workflow
+
+unzip-frontend-aibase:
+	tar -zxvf frontend/aibase.tar.gz -C frontend
+
+unzip-frontend-workflow:
+	tar -zxvf frontend/workflow.tar.gz -C frontend
+
+unzip-frontend-wga:
+	tar -zxvf frontend/wga.tar.gz -C frontend
+
+update-frontend:
+	make -f Makefile.develop update-frontend-aibase
+	make -f Makefile.develop update-frontend-workflow
+
+update-frontend-aibase:
+	rm -r $(WANWU_PROJECT_DIR)/nginx/html/aibase
+	cp -r frontend/aibase $(WANWU_PROJECT_DIR)/nginx/html
+
+update-frontend-workflow:
+	rm -r $(WANWU_PROJECT_DIR)/nginx/html/workflow
+	cp -r frontend/workflow $(WANWU_PROJECT_DIR)/nginx/html
+
+update-frontend-wga:
+	rm -r $(WANWU_PROJECT_DIR)/nginx/html/wga
+	cp -r frontend/wga $(WANWU_PROJECT_DIR)/nginx/html
+
+# --- nginx ---
+run-nginx:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d nginx
+
+stop-nginx:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down nginx
+
+# --- bff-service ---
+run-bff: # 启动bff后自动重启下nginx
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d bff-service
+	docker restart ${WANWU_NGINX_HOST}
+
+stop-bff:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down bff-service
+
+# --- iam-service ---
+run-iam:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d iam-service
+
+stop-iam:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down iam-service
+
+# --- model-service ---
+run-model:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d model-service
+
+stop-model:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down model-service
+
+# --- mcp-service ---
+run-mcp:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d mcp-service
+
+stop-mcp:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down mcp-service
+
+# --- app-service ---
+run-app:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d app-service
+
+stop-app:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down app-service
+
+# --- operate-service ---
+run-operate:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d operate-service
+
+stop-operate:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down operate-service
+
+# --- rag-service ---
+run-rag:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d rag-service
+
+stop-rag:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down rag-service
+		
+# --- knowledge-base-service ---
+run-knowledge:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d knowledge-service
+
+stop-knowledge:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down knowledge-service
+
+# --- assistant-service ---
+run-assistant:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d assistant-service
+
+stop-assistant:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down assistant-service
+
+# --- agent-service ---
+run-agent:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d agent-service
+
+stop-agent:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down agent-service
+
+# --- callback ---
+run-callback:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d callback
+
+
+stop-callback:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down callback
+
+# --- workflow ---
+run-workflow: # 启动workflow后自动重启下nginx
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d workflow
+	docker restart ${WANWU_NGINX_HOST}
+
+stop-workflow:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down workflow
+
+# --- channel-service ---
+run-channel:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d channel-service
+
+stop-channel:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down channel-service
+
+# --- rag-wanwu ---
+run-rag-wanwu:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		up -d rag
+
+stop-rag-wanwu:
+	docker compose -f docker-compose-develop.yaml \
+		--env-file .env.image.${WANWU_ARCH} \
+		--env-file .env \
+		down rag

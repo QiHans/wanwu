@@ -1,0 +1,93 @@
+server:
+  port: 8990
+
+# logger configuration
+log:
+  std: true
+  level: info
+  logs:
+    - enable: true
+      filename: log/agent-info.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+    - enable: true
+      filename: log/agent-err.log
+      level: error
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+access-log:
+  std: true
+  level: info
+  logs:
+    - enable: true
+      filename: log/agent-access.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+rpc-log:
+  std: true
+  level: info
+  logs:
+    - enable: true
+      filename: log/agent-rpc.log
+      level: info
+      max_size: 10
+      max_backups: 10
+      max_age: 30
+
+rag-server:
+  endpoint: 'http://localhost:8681'
+  proxy-point: 'http://localhost:8088'
+  knowledge-hit-uri: '/callback/v1/rag/search-knowledge-base'
+  doc-parser-uri: '/rag/doc_parser'
+  timeout: 60
+
+tool-server:
+  endpoint: 'http://callback-wanwu:8669'
+
+bff-server:
+  endpoint: 'http://localhost:8088'
+  search-model-uri: '/callback/v1/model/'
+  timeout: 600
+
+agent-file-config:
+  local-file-path: static/temp
+
+minio:
+  endpoint: localhost:9000
+  user: root
+  password: Wanwu123456
+  bucket: file-upload
+  download-url: http://localhost:9000/minio/download/api
+
+microservices:
+  assistant:
+    host: localhost:8890
+
+wga-sandbox:
+  sandbox:
+    type: reuse
+    host: wga-sandbox-wanwu
+    image-name: ""
+
+# tool-template 配置
+tool-template:
+  special-tool-model: # 需要特殊处理的模型工具，比如不能使用英文的
+    - model-name: [ "deepseek-v4-flash", "deepseek-v4-pro" ]
+      provider: "deepseek"
+  deep-seek-reasoning: # deepseek系列要求，使用reasoning同时使用tool时，要回传reasoning-content
+    - model-name: [ "deepseek-v4-flash", "deepseek-v4-pro" ]
+      provider: "deepseek"
+  tools:
+    - id: doc_parser
+      file-path: configs/microservice/agent-service/tool-template/doc_parser.json
+      tool-name: 文档解析工具
+      avatar: ""
+    - id: skill_tool
+      file-path: configs/microservice/agent-service/tool-template/skill_tool.json
+      tool-name: 技能工具
+      avatar: ""

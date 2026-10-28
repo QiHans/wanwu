@@ -1,0 +1,30 @@
+# ============================================
+#  Wanwu Platform - Frontend Dockerfile
+#  构建自定义 aibase 前端 + 提取官方 workflow 前端
+#  不依赖 wanwu-workflow 仓库，可从项目根目录直接构建
+# ============================================
+
+# --- 第一阶段：构建自定义 aibase 前端 ---
+FROM node:22 AS builder-aibase
+WORKDIR /app
+COPY web/package.json web/package-lock.json ./
+ENV npm_config_registry=https://registry.npmmirror.com
+RUN npm install --legacy-peer-deps
+COPY web/ ./
+RUN npm install core-js@3 --save --legacy-peer-deps && npm run build
+
+# --- 第二阶段：从官方镜像提取 workflow 前端 ---
+FROM crpi-6pj79y7ddzdpexs8.cn-hangzhou.personal.cr.aliyuncs.com/wanwulite/wanwu-frontend:v0.5.10-7c361e6d AS builder-workflow
+
+# --- 第三阶段：运行阶段 ---
+FROM nginx:1.27
+
+COPY configs/middleware/nginx/conf.d /etc/nginx/conf.d
+
+# 自定义 aibase 前端
+COPY --from=builder-aibase /app/dist /usr/share/nginx/html/aibase
+
+# 官方 workflow 前端（从官方镜像中提取）
+COPY --from=builder-workflow /usr/share/nginx/html/workflow /usr/share/nginx/html/workflow
+
+CMD ["nginx", "-g", "daemon off;"]

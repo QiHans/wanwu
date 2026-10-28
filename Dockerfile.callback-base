@@ -1,0 +1,30 @@
+ARG WANWU_ARCH
+
+# 构建环境
+FROM --platform=linux/$WANWU_ARCH python:3.12-slim
+
+# 设置工作目录
+WORKDIR /callback
+
+# 复制依赖文件并安装
+COPY ./callback/requirements.txt .
+
+RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+
+# 复制启动脚本
+COPY ./callback/start.sh .
+
+# 赋予脚本执行权限
+RUN chmod +x start.sh
+
+# 清理环境
+RUN rm -rf /var/lib/apt/lists/* /root/.cache/pip
+
+# 环境变量
+ENV FLASK_APP=run.py
+
+EXPOSE 8669
+
+# 使用 gunicorn 启动 Flask（加载 run.py 中的 app）
+CMD ["sh", "start.sh"]

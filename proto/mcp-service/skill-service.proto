@@ -1,0 +1,331 @@
+syntax = "proto3";
+
+package mcp_service;
+
+import "proto/mcp-service/common.proto";
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/mcp-service";
+
+// --- custom skill ---
+message CustomSkill {
+  string skillId = 1;
+  string name = 2;
+  string avatar = 3;
+  string author = 4;
+  string desc = 5;
+  string objectPath = 6; // 老数据兼容
+  string wgaThreadId = 7;
+  string previewThreadId = 8;
+  Identity identity = 9;
+  int64 createdAt = 10;
+  int64 updatedAt = 11;
+  int32 downloadCount = 12;
+  int32 acquiredCount = 13;
+}
+
+message PublishCustomSkill {
+  CustomSkill skill = 1;
+  string objectPath = 2;
+  string markdown = 3;
+  string version = 4;
+  string versionDesc = 5;
+  int64 createdAt = 6;
+  int64 updatedAt = 7;
+}
+
+message CustomSkillCreateReq {
+  string name = 1;
+  string avatar = 2;
+  string author = 3;
+  string desc = 4;
+  string wgaThreadId = 5;
+  string previewThreadId = 6;
+  Identity identity = 7;
+}
+
+message CustomSkillCreateResp {
+  string skillId = 1;
+}
+
+message CustomSkillDeleteReq {
+  string skillId = 1;
+}
+
+message CustomSkillGetReq {
+  string skillId = 1;
+}
+
+// 按 previewThreadId 查找 custom skill；未命中时 skillId 为空。非数据库错误不返回 RPC 错误。
+message GetCustomSkillByPreviewIDReq {
+  string previewThreadId = 1;
+}
+
+message GetCustomSkillByPreviewIDResp {
+  CustomSkill skill = 1;
+}
+
+// 按 wgaThreadId 查找 custom skill；未命中时 skillId 为空。非数据库错误不返回 RPC 错误。
+message GetCustomSkillByThreadIDReq {
+  string wgaThreadId = 1;
+}
+
+message GetCustomSkillByThreadIDResp {
+  CustomSkill skill = 1;
+}
+
+// 按 wgaThreadIdList 批量查找 custom skill，返回 CustomSkillGetListResp（PublishCustomSkill：草稿 + 可选最新发布）。
+// 未命中的 threadId 仍占一条：仅 wgaThreadId 有值、skillId 为空，与 GetCustomSkillByThreadID 未命中语义一致。非数据库错误不返回 RPC 错误。
+message GetCustomSkillListByThreadIDListReq {
+  Identity identity = 1;
+  repeated string wgaThreadIdList = 2;
+}
+
+message CustomSkillGetListReq {
+  string name = 1;
+  Identity identity = 2;
+}
+
+message CustomSkillGetListResp {
+  repeated PublishCustomSkill list = 1;
+  int64 total = 2;
+}
+
+message CustomSkillDetailByIdListReq {
+  repeated string skillIds = 1;
+}
+
+message CustomSkillDetailByIdListResp {
+  repeated CustomSkill skillDetails = 1;
+}
+
+message UpdateCustomSkillBasicMetaReq {
+  string skillId = 1;   // 必填
+  string name = 2;
+  string desc = 3;
+}
+
+message UpdateCustomSkillThreadMetaReq {
+  string skillId = 1;   // 必填
+  string wgaThreadId = 2;
+  string previewThreadId = 3;
+}
+
+message CreateCustomSkillVarReq {
+  string skillId = 1;
+  Variable variable = 2;
+}
+
+message SkillVariableCreateResp {
+  string id = 1;
+}
+
+message UpdateCustomSkillVarReq {
+  string id = 1;
+  Variable variable = 2;
+  Identity identity = 3;
+}
+
+message DeleteCustomSkillVarReq {
+  string id = 1;
+  Identity identity = 2;
+}
+
+message GetCustomSkillVarsReq {
+  string skillId = 1;
+}
+
+message CustomSkillVars {
+  string skillId = 1;
+  repeated Variable variables = 2;
+  int64 total = 3;
+}
+
+// --- custom skill publish ---
+message PublishCustomSkillReq {
+  string skillId = 1;
+  string version = 2;
+  string versionDesc = 3;
+  Identity identity = 4;
+  string objectPath = 5;
+  string markdown = 6;
+}
+
+message UpdatePublishCustomSkillReq {
+  string skillId = 1;
+  string versionDesc = 2;
+}
+
+message GetPublishCustomSkillHistoryListReq {
+  string skillId = 1;
+}
+
+message PublishCustomSkillHistoryListResp {
+  repeated PublishCustomSkill historyList = 1;
+  int64 total = 2;
+}
+
+message GetPublishCustomSkillByLatestReq {
+  string skillId = 1;
+}
+
+message GetPublishCustomSkillByVersionReq {
+  string skillId = 1;
+  string version = 2;
+}
+
+message GetPublishCustomSkillListReq {
+  Identity identity = 1;
+  string name = 2;
+}
+
+message GetPublishCustomSkillListResp {
+  repeated PublishCustomSkill list = 1;
+}
+
+message GetPublishCustomSkillByIDListReq {
+  repeated string skillIdList = 1;
+}
+
+message GetPublishCustomSkillByIDListResp {
+  repeated PublishCustomSkill list = 1;
+}
+
+// --- acquired skill ---
+message AcquiredSkill {
+  string acquiredSkillId = 1;
+  PublishCustomSkill skill = 2;
+  int64 createdAt = 4;
+  int64 updatedAt = 5;
+  string userId = 6;
+  string orgId = 7;
+}
+
+message AcquiredSkillCreateReq {
+  Identity identity = 1;
+  string customSkillId = 2;
+}
+
+message AcquiredSkillCreateResp {
+  string acquiredSkillId = 1;
+}
+
+message AcquiredSkillDeleteReq {
+  string acquiredSkillId = 1;
+}
+
+message AcquiredSkillGetReq {
+  string acquiredSkillId = 1;
+}
+
+message AcquiredSkillGetListReq {
+  Identity identity = 1;
+  string name = 2;
+}
+
+message AcquiredSkillGetListResp {
+  repeated AcquiredSkill list = 1;
+  int64 total = 2;
+}
+
+message AcquiredSkillGetByIDListReq {
+  repeated string acquiredSkillIdList = 1;
+}
+
+message AcquiredSkillGetByIDListResp {
+  repeated AcquiredSkill list = 1;
+  int64 total = 2;
+}
+
+message AcquiredSkillGetHistoryListReq {
+  string acquiredSkillId = 1;
+}
+
+message AcquiredSkillHistoryListResp {
+  repeated PublishCustomSkill historyList = 1;
+  int64 total = 2;
+}
+
+message CheckAcquiredSkillReq {
+  repeated string skillIds = 1;
+  Identity identity = 2;
+}
+
+message CheckAcquiredSkillResp {
+  map<string, bool> acquiredMap = 1;
+}
+
+message CreateAcquiredSkillVarReq {
+  string acquiredSkillId = 1;
+  Variable variable = 2;
+}
+
+message UpdateAcquiredSkillVarReq {
+  string id = 1;
+  Variable variable = 2;
+  Identity identity = 3;
+}
+
+message DeleteAcquiredSkillVarReq {
+  string id = 1;
+  Identity identity = 2;
+}
+
+message GetAcquiredSkillVarsReq {
+  string acquiredSkillId = 1;
+}
+
+message AcquiredSkillVars {
+  string acquiredSkillId = 1;
+  repeated Variable variables = 2;
+  int64 total = 3;
+}
+
+// --- builtin skill config ---
+// skillId 为内置技能的业务字符串标识（如 pdf、excel），与 custom skill 表主键数字转成的 skillId 不同；禁止按 int 解析。
+message CreateBuiltinSkillVarReq {
+  string skillId = 1; // 内置 skill 业务 ID，任意合法字符串
+  Variable variable = 2;
+  Identity identity = 3;
+}
+
+message DeleteBuiltinSkillVarReq {
+  string id = 1;
+  Identity identity = 2;
+}
+
+// 查询单个 builtin skill（skillId）在当前 identity 下的全部配置变量。
+message GetBuiltinSkillVarsReq {
+  string skillId = 1; // 同上
+  Identity identity = 2;
+}
+
+message GetBuiltinSkillsVarsReq {
+  Identity identity = 1;
+  repeated string skillIds = 2;
+}
+
+message GetBuiltinSkillsVarsResp {
+  repeated BuiltinSkillVars skills = 1;
+}
+
+// 单个 skill 下的变量列表；total 与 variables 条数一致（全量、无分页）。
+message BuiltinSkillVars {
+  string skillId = 1; // 同上
+  repeated Variable variables = 2;
+  int64 total = 3;
+}
+
+message UpdateBuiltinSkillVarReq {
+  string id = 1;
+  Variable variable = 2;
+  Identity identity = 3;
+}
+
+message Variable {
+  string id = 1;
+  string name = 2;
+  string desc = 3;
+  string variableKey = 4;
+  string variableValue = 5;
+}
+

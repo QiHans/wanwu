@@ -1,0 +1,435 @@
+syntax = "proto3";
+
+package knowledgebase_doc_service;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "gitlab.ai-yuanjing.cn/ai-platform-private/backend-used-bff/common-api/api/proto/knowledgebase-doc-service";
+
+service KnowledgeBaseDocService {
+  // 获取文档列表
+  rpc GetDocList(GetDocListReq) returns (GetDocListResp) {}
+  // 根据文档id列表获取文档列表
+  rpc GetDocListByDocIdList(GetDocListByDocIdListReq) returns (GetDocListResp) {}
+  // 获取文档详情
+  rpc GetDocDetail(GetDocDetailReq) returns (DocInfo) {}
+  // 上传文档
+  rpc ImportDoc(ImportDocReq) returns (google.protobuf.Empty) {}
+  // 重新解析文档
+  rpc ReImportDoc(ReImportDocReq) returns (google.protobuf.Empty) {}
+  // 更新文档导入配置
+  rpc UpdateDocImportConfig(UpdateDocImportConfigReq) returns (google.protobuf.Empty) {}
+  // 导出文档
+  rpc ExportDoc(ExportDocReq) returns (google.protobuf.Empty) {}
+  // 更新文档状态
+  rpc UpdateDocStatus(UpdateDocStatusReq) returns (google.protobuf.Empty) {}
+  // 更新文档元数据
+  rpc UpdateDocMetaData(UpdateDocMetaDataReq) returns (google.protobuf.Empty) {}
+  // 批量更新文档元数据
+  rpc BatchUpdateDocMetaData(BatchUpdateDocMetaDataReq) returns (google.protobuf.Empty) {}
+  // 初始化文档状态
+  rpc InitDocStatus(InitDocStatusReq) returns (google.protobuf.Empty) {}
+  // 删除文档
+  rpc DeleteDoc(DeleteDocReq) returns (google.protobuf.Empty) {}
+  // 获取知识库异步上传任务提示
+  rpc GetDocCategoryUploadTip(DocImportTipReq) returns (DocImportTipResp) {}
+  // 获取知识库文档切分结果
+  rpc GetDocSegmentList(DocSegmentListReq) returns (DocSegmentListResp) {}
+  // 更新文档切片状态
+  rpc UpdateDocSegmentStatus(UpdateDocSegmentStatusReq) returns (google.protobuf.Empty) {}
+  // url上传功能-解析url
+  rpc AnalysisDocUrl(AnalysisUrlDocReq) returns (AnalysisUrlDocResp) {}
+  // 更新文档元数据标签
+  rpc UpdateDocSegmentLabels(DocSegmentLabelsReq) returns (google.protobuf.Empty) {}
+  // 新增文档分片
+  rpc CreateDocSegment(CreateDocSegmentReq) returns (google.protobuf.Empty) {}
+  // 批量新增文档分片
+  rpc BatchCreateDocSegment(BatchCreateDocSegmentReq) returns (google.protobuf.Empty) {}
+  // 删除文档分片
+  rpc DeleteDocSegment(DeleteDocSegmentReq) returns (google.protobuf.Empty) {}
+  // 更新文档分片
+  rpc UpdateDocSegment(UpdateDocSegmentReq) returns (google.protobuf.Empty) {}
+  // 获取文档子分段列表
+  rpc GetDocChildSegmentList(GetDocChildSegmentListReq) returns (GetDocChildSegmentListResp){}
+  // 新增文档子分片
+  rpc CreateDocChildSegment(CreateDocChildSegmentReq) returns (google.protobuf.Empty) {}
+  // 删除文档子分片
+  rpc DeleteDocChildSegment(DeleteDocChildSegmentReq) returns (google.protobuf.Empty) {}
+  // 更新文档子分片
+  rpc UpdateDocChildSegment(UpdateDocChildSegmentReq) returns (google.protobuf.Empty) {}
+  // 获取多模态知识库上传文件类型
+  rpc GetDocUploadLimit(google.protobuf.Empty) returns (DocUploadLimitResp) {}
+}
+
+message GetDocListReq{
+  string knowledgeId = 1;
+  string docName = 2;
+  repeated int32 status = 3;
+  int32 pageSize = 4;
+  int32 pageNum = 5;
+  string userId = 6;
+  string orgId = 7;
+  string docTag = 8; //文档标签
+  string metaValue = 9; // 元数据值过滤(string/number 类型)
+  repeated int32 graphStatus = 10; //图谱状态
+  repeated string docIdList = 11; // 文档id列表，只用于返回所选文档的集合，该值不为空时，其他筛选条件将被忽略
+  string metaType = 12; // 元数据类型: string/number/time，为空时按旧逻辑(metaValue 模糊匹配，排除 time 类型)
+  string metaStartTime = 13; // metaType=time 时的起始时间戳(毫秒，字符串，与 metaValue 一致)
+  string metaEndTime = 14; // metaType=time 时的结束时间戳(毫秒，字符串，与 metaValue 一致)
+}
+
+message GetDocDetailReq{
+  string docId = 1;
+  string userId = 2;
+  string orgId = 3;
+  bool needConfig = 4;
+}
+
+message GetDocListByDocIdListReq{
+  repeated string docIdList = 1;
+  string userId = 2;
+  string orgId = 3;
+}
+
+message GetDocListResp {
+  repeated DocInfo docs = 1;
+  int64 total = 2;
+  int32 pageNum = 3;
+  int32 pageSize = 4;
+  KnowledgeInfo knowledgeInfo = 5;
+}
+
+message KnowledgeInfo {
+  string knowledgeId = 1;//知识库id
+  string knowledgeName = 2;//知识库名称
+  int32 graphSwitch = 3; //知识库图谱开关
+  bool showGraphReport = 4; //是否展示知识图谱和社区报告
+  string description = 5; // 知识库描述
+  string embeddingModelId = 6; // emb模型id
+  repeated KeywordsInfo keywords = 7; // 关键词列表
+  string llmModelId = 8; // llm模型id（知识图谱）
+  int32 category = 9; // 知识库分类 0：知识库，1：问答库 2: 多模态知识库
+  string avatarPath = 10; // 知识库头像
+  int32 permissionType = 11; // 当前用户对该知识库的权限类型 -1:无权限 0:查看 10:编辑 20:授权 30:系统管理授权
+}
+
+message KeywordsInfo {
+  uint32 id = 1;
+  string name = 2;
+  string alias = 3;
+  repeated string knowledgeBaseIds = 4;
+  repeated string knowledgeBaseNames = 5;
+  string updatedAt = 6;
+}
+
+message ImportDocReq {
+  string userId = 1;
+  string orgId = 2;
+  string knowledgeId = 3; //知识库id
+  int32 docImportType = 4;//文档导入类型，0：文件上传，1：url上传，2.批量url上传
+  repeated DocFileInfo docInfoList = 5; //上传文档列表
+  DocSegment docSegment = 6; //分段信息配置
+  repeated string docAnalyzer = 7;//文档解析类型
+  string ocrModelId = 8; //ocr模型id
+  repeated string docPreprocess = 9;//文本预处理规则
+  repeated DocMetaData docMetaDataList = 10; // 元数据列表
+  string asrModelId = 11; // asr模型id
+  string multimodalModelId = 12; // 多模态模型id
+}
+
+
+message UpdateDocImportConfigReq {
+  ImportDocReq importDocReq = 1; //配置信息
+  repeated string docIdList = 2; //文档id列表
+  string knowledgeId = 3;
+}
+
+message ReImportDocReq {
+  string userId = 1;
+  string orgId = 2;
+  string knowledgeId = 3; //知识库id
+  repeated string docIdList = 4;//文档id列表
+}
+
+message ExportDocReq {
+  string userId = 1;
+  string orgId = 2;
+  string knowledgeId = 3; //知识库id
+  repeated string docIdList = 4;//文档id列表
+}
+
+message DocMetaData{
+  string key = 1; //key
+  string value = 2; //常量
+  string valueType = 3; //常量类型
+  string rule = 4; //正则表达式
+}
+
+message UpdateDocStatusReq {
+  string docId = 1; //文档id
+  int32 status = 2;//文档状态
+  repeated MetaData metaDataList = 3;//文档元数据信息
+}
+
+message UpdateDocMetaDataReq {
+  string orgId = 1;
+  string userId = 2;
+  string docId = 3; //文档id
+  repeated MetaData metaDataList = 4;//文档元数据信息
+  string knowledgeId = 5;//知识库id
+}
+
+message BatchUpdateDocMetaDataReq {
+  string orgId = 1;
+  string userId = 2;
+  string docId = 3; //文档id
+  repeated MetaData metaDataList = 4;//文档元数据信息
+  string knowledgeId = 5;//知识库id
+  bool createMeta = 6;//文档没设置过对应key则创建元数据
+}
+
+message MetaData {
+  string metaId = 1; // 元数据id
+  string key = 2; // key
+  string value = 3; // 确定值
+  string valueType = 4; // string, number, time
+  string option = 5; // option:add(新增)、update(更新)、delete(删除),update 和delete 的时候metaId 不能为空
+  string rule = 6; // 正则表达式
+}
+
+message InitDocStatusReq {
+  string userId = 1;
+  string orgId = 2;
+}
+
+message DeleteDocReq{
+  repeated string ids = 1;
+  string userId = 2;
+  string orgId = 3;
+  string knowledgeId = 4;
+}
+
+
+message DocFileInfo {
+  string docName = 1;  //文档名称
+  string docUrl = 2;  //文档url
+  string docType = 3; // 文档类型
+  string docId = 4;//文档id
+  int64 docSize = 5;//文档大小
+}
+
+message DocSegment {
+  string SegmentType = 1;  //分段方式 0：自定分段；1：自定义分段
+  repeated string Splitter = 2;     // 分隔符（只有自定义分段必填）
+  int32 MaxSplitter = 3;   // 可分隔最大值（只有自定义分段必填）
+  float Overlap = 4;       // 可重叠值（只有自定义分段必填）
+  string segmentMethod = 5;  //分段方法 0：通用分段；1：父子分段
+  repeated string subSplitter = 6;     // 分隔符（只有父子分段必填）
+  int32 subMaxSplitter = 7;   // 可分隔最大值（只有父子分段必填）
+}
+
+message DocImportTipReq {
+  string userId = 1;
+  string orgId = 2;
+  string knowledgeId = 3;
+}
+
+message DocImportTipResp{
+  string knowledgeName = 1;
+  string knowledgeId = 2;
+  string message = 3;
+  int32 uploadStatus = 4;
+}
+
+message DocSegmentListResp{
+  string fileName = 1;
+  repeated SegmentContent contentList = 2;
+  int32 pageTotal = 3;
+  int32 segmentTotalNum = 4;
+  int32 maxSegmentSize = 5;
+  string createdAt = 6;
+  string segType = 7;
+  string splitter = 8;
+  repeated MetaData metaDataList = 9;//文档元数据信息
+  string segmentImportStatus = 10;//文档分段导入状态
+  string segmentMethod = 11;
+  repeated string docAnalyzer = 12;// 文档解析方式
+  string asrModelId = 13;// ASR模型ID
+  string multimodalModelId = 14;// 图文问答模型ID
+  string parserModelId = 15;// OCR/模型解析 模型ID
+  string downloadUrl = 16;// 文档对外下载地址(RAG 返回的可用链接)
+  bool canPreview = 17; // 是否可预览
+  string previewFailReason = 18; // 不可预览原因
+}
+
+message SegmentContent{
+  string content = 1;
+  int32 len = 2;
+  bool available = 3;
+  string contentId = 4;
+  int32 contentNum = 5;
+  repeated string labels = 6;
+  bool isParent = 7; // 父子分段/通用分段
+  int32 childNum = 8; // 子分段数量
+}
+
+message DocInfo{
+  string docId = 1;
+  string docName = 2;
+  int64 docSize = 3;
+  string docType = 4; //文档名称
+  string knowledgeId = 5;
+  string uploadTime = 6;
+  int32 status = 7;
+  string errorMsg = 8;
+  string segmentMethod = 9;//分段方式 0：通用分段，1：父子分段
+  string userId = 10;
+  int32 graphStatus = 11;//0:待处理，1.解析中，2.解析成功，3.解析失败
+  string graphErrMsg = 12;//错误信息
+  DocConfigInfo docConfigInfo = 13;//文档配置信息,只有detail接口参数needConfig为true才会返回
+  bool isMultimodal = 14; // 是否为多模态文件
+  int32 docProgress = 15;//文档解析进度百分比 (0-100)
+  int32 graphProgress = 16;//图谱解析进度百分比 (0-100)
+}
+
+message DocConfigInfo {
+  int32 docImportType = 1;//文档导入类型，0：文件上传，1：url上传，2.批量url上传
+  DocSegment docSegment = 2; //分段信息配置
+  repeated string docAnalyzer = 3;//文档解析类型
+  string ocrModelId = 4; //ocr模型id
+  repeated string docPreprocess = 5;//文本预处理规则
+  string asrModelId = 6;
+  string multimodalModelId = 7;
+}
+
+message DocSegmentListReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  int32 pageSize = 4;
+  int32 pageNo = 5;
+  string keyword = 6; // 筛选分段
+}
+
+message UpdateDocSegmentStatusReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string contentId = 4;
+  string contentStatus = 5;
+  bool all = 6;
+}
+
+message AnalysisUrlDocReq{
+  string userId = 1;
+  string orgId = 2;
+  string knowledgeId = 3;
+  repeated string urlList = 4;
+}
+
+message AnalysisUrlDocResp{
+  repeated UrlInfo urlList = 1;
+}
+
+message UrlInfo{
+  string url = 1;
+  string fileName = 2;
+  double fileSize = 3;
+}
+
+message DocSegmentLabelsReq{
+  string orgId = 1;
+  string contentId = 2;
+  string docId = 3;
+  repeated string labels = 4;
+  string userId = 5;
+}
+
+message CreateDocSegmentReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string content = 4;
+  repeated string labels = 5;
+}
+
+message BatchCreateDocSegmentReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string fileUrl = 4;
+}
+
+message DeleteDocSegmentReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string contentId = 4;
+}
+
+message UpdateDocSegmentReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string contentId = 4;
+  string content = 5;
+}
+
+message GetDocChildSegmentListReq{
+  string userId = 1;
+  string orgId = 2;
+  string contentId = 3;
+  string docId = 4;
+}
+
+message GetDocChildSegmentListResp{
+  repeated ChildSegmentInfo contentList = 1;
+}
+
+message ChildSegmentInfo{
+  string content = 1;
+  string childId = 2;
+  int32 childNum = 3;
+  string parentId = 4;
+}
+
+message CreateDocChildSegmentReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string parentChunkId = 4;
+  repeated string content = 5;
+}
+
+message DeleteDocChildSegmentReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string parentChunkId = 4;//父分段id
+  int32 parentChunkNo = 5;//父分段编号
+  repeated int32 childChunkNo = 6; //子分段编号列表
+}
+
+message UpdateDocChildSegmentReq{
+  string userId = 1;
+  string orgId = 2;
+  string docId = 3;
+  string parentChunkId = 4;//父分段id
+  int32 parentChunkNo = 5;//父分段编号
+  ChildChunk childChunk = 6; //子分段编号
+}
+
+message ChildChunk{
+  string content = 1;
+  int32 chunkNo = 2;
+}
+
+
+message DocUploadLimitResp{
+  repeated FileTypeLimit list = 1;
+}
+
+message FileTypeLimit{
+  string fileType = 1;
+  repeated string extList = 2;
+}

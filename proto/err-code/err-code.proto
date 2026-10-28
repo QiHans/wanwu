@@ -1,0 +1,285 @@
+syntax = "proto3";
+
+package err_code;
+
+option go_package = "github.com/UnicomAI/wanwu/api/proto/err-code";
+
+enum Code {
+  OK = 0;
+
+  // --- bff-service ---
+  // [110000, 119999]
+  BFFGeneral = 110000; // 通用错误
+  BFFInvalidArg = 110001; // 参数错误
+  BFFJWT = 110002; // JWT错误
+  BFFAuth = 110003; // Auth错误
+  BFFSensitiveWordCheck = 110005; // 敏感词校验错误
+  BFFRegisterDisable = 110006; // 用户注册禁用
+  BFFResetPasswordDisable = 110007; // 用户忘记密码禁用
+  BFFLoginDisable = 110008; // 邮箱登录禁用
+  BFFSingleLoginDisable = 110009; // 单因子登录禁用
+  BFFAppType = 110010; // 应用类型错误
+  BFFModelStatus = 110011; // 模型状态错误
+  BFFSkillParse = 110012; // 技能解析错误
+  BFFRateLimited = 110013; // 限流错误
+
+  // --- iam-service ---
+  // [120000, 129999]
+  IAMGeneral = 120000; // 通用错误
+  IAMInternal = 120001; // 内部错误
+  IAMCaptcha = 120002; // 验证码错误
+  IAMLogin = 120003; // 登录相关错误
+  IAMRegister = 120004; // 注册相关错误
+  IAMOrg = 120011; // 组织相关错误
+  IAMRole = 120021; // 角色相关错误
+  IAMUser = 120031; // 用户相关错误
+  IAMOauth = 120041; // OAuth相关错误
+
+  // --- perm-service ---
+  // [130000, 139999]
+  PermGeneral = 130000; // 通用错误
+  PermRBAC = 130001; // 权限校验错误
+  PermRBACReLogin = 130002; // 权限校验错误(需要重新登录)
+
+  // --- knowledge-service ---
+  // [140000, 149999]
+  KnowledgeGeneral = 140000; // 系统异常，请稍后重试
+  KnowledgeBaseCreateFailed = 141001; // 新建知识库失败，请稍后重试
+  KnowledgeBaseDeleteFailed = 141002; // 删除知识库失败，请稍后重试
+  KnowledgeBaseUpdateFailed = 141003; // 修改知识库失败，请稍后重试
+  KnowledgeBaseFetchFailed = 141004; // 获取知识库失败，请稍后重试
+  KnowledgeBaseAccessDenied = 141005; // 没有操作该知识库的权限
+  KnowledgeBaseDeleteDuringUpload = 141006; // 知识库正在上传文档，不可删除
+  KnowledgeBaseDeleteDuringParse = 141007; // 知识库正在解析文档，不可删除
+  KnowledgeBaseDuplicateName = 141008; // 已存在同名知识库
+  KnowledgeBaseSelectFailed = 141009; // 查询知识库列表失败，请稍后重试
+  KnowledgeBaseHitFailed = 141010; // 命中测试失败，请稍后重试
+  KnowledgeBaseGraphFailed = 141011; // 查询知识图谱失败，请稍后重试
+  KnowledgeDocDeleteDuringParse = 142001; // 文档正在解析文档，不可删除
+  KnowledgeDocDeleteFailed = 142002; // 文档删除失败，请稍后重试
+  KnowledgeDocSegmentStatusUpdateFail = 142003; // 修改文档分段状态失败，请稍后重试
+  KnowledgeDocImportFail = 142004; // 文档导入失败，请稍后重试
+  KnowledgeDocSplitFailed = 142005; // 文档分片查询失败，请稍后重试
+  KnowledgeDocUpdateStatusFailed = 142006; // 更新文档状态失败，请稍后重试
+  KnowledgeDocImportUrlFailed = 142007; // 获取上传文档失败，请稍后重试
+  KnowledgeDocUpdateMetaFailed = 142008; // 更新文档元数据失败，请稍后重试
+  KnowledgeDocUpdateMetaStatusFailed = 142009; // 非处理完成文档无法更新元数据，请稍后重试
+  KnowledgeDocSegmentFileCSVTypeFail = 142010; // 上传文档必须是csv，请修改后重试
+  KnowledgeDocUpdateMetaSameKeyFailed = 142011; // 更新文档元数据失败，已存在重复key，请稍后重试
+  KnowledgeDocExportFail = 142012; // 文档导出失败，请稍后重试
+  KnowledgeDocSearchFail = 142013; // 文档信息查询失败，请稍后重试
+  KnowledgeDocUpdateConfigFail = 142014; // 文档更新配置失败，请稍后重试
+  KnowledgeDocStatusFinishCheckFail = 142015; // 存在非处理完成状态文档，请重新选择文档后重试
+  KnowledgeDocNotExist = 142016; // 该文档不存在
+  KnowledgeDocDeletePartFailed = 142017; // 文档部分删除失败，请稍后重试
+  KnowledgeTagCreateFailed = 143001; // 新建知识库标签失败，请稍后重试
+  KnowledgeTagDeleteFailed = 143002; // 删除知识库标签失败，请稍后重试
+  KnowledgeTagUpdateFailed = 143003; // 修改知识库标签失败，请稍后重试
+  KnowledgeTagDuplicateName = 143004; // 已存在同名知识库标签
+  KnowledgeTagSelectFailed = 143005; // 查询知识库标签列表失败，请稍后重试
+  KnowledgeTagBindFailed = 143006; // 知识库标签设置失败，请稍后重试
+  KnowledgeTagUnbindFailed = 143007; // 知识库标签取消失败，请稍后重试
+  KnowledgeTagAccessDenied = 143008; // 没有操作该知识库标签的权限
+  KnowledgeKeywordsCreateFailed = 144001; // 新建关键词失败，请稍后重试
+  KnowledgeKeywordsDeleteFailed = 144002; // 删除关键词失败，请稍后重试
+  KnowledgeKeywordsUpdateFailed = 144003; // 修改关键词失败，请稍后重试
+  KnowledgeKeywordsListFailed = 144004; // 查询关键词列表失败，请稍后重试
+  KnowledgeKeywordsInfoFailed = 144005; // 查询关键词详情失败，请稍后重试
+  KnowledgeKeywordsRepeated = 144006; // 关键词在知识库中已存在，请勿重复添加
+  KnowledgeSplitterCreateFailed = 145001; // 新建知识库分隔符失败，请稍后重试
+  KnowledgeSplitterDeleteFailed = 145002; // 删除知识库分隔符失败，请稍后重试
+  KnowledgeSplitterUpdateFailed = 145003; // 修改知识库分隔符失败，请稍后重试
+  KnowledgeSplitterDuplicateName = 145004; // 已存在同名知识库分隔符
+  KnowledgeSplitterSelectFailed = 145005; // 查询知识库标分隔符表失败，请稍后重试
+  KnowledgeSplitterAccessDenied = 145008; // 没有操作该知识库分隔符的权限
+  KnowledgeDocSegmentUpdateLabelsFailed = 145009; // 更新文档切片标签失败，请稍后重试
+  KnowledgeDocSegmentCreateFailed = 145010; // 新增文档分段失败，请稍后重试
+  KnowledgeDocSegmentExceedMaxSize = 145011; // 分段长度超过最大值
+  KnowledgeDocSegmentUpdateFailed = 145012; // 更新文档分段失败，请稍后重试
+  KnowledgeDocSegmentDeleteFailed = 145013; // 删除文档分段失败，请稍后重试
+  KnowledgeMetaFetchFailed = 145014; // 查询知识库元数据失败，请稍后重试
+  KnowledgeMetaCreateFailed = 145015; // 新增知识库元数据失败，请稍后重试
+  KnowledgeMetaUpdateFailed = 145016; // 更新知识库元数据失败，请稍后重试
+  KnowledgeMetaDeleteFailed = 145017; // 删除知识库元数据失败，请稍后重试
+  KnowledgeMetaDuplicateKey = 145018; // 已存在同名元数据key
+  KnowledgeInvalidArguments = 145019; // 非法参数
+  KnowledgeDocSegmentEmpty = 145020; // 文档分段内容为空
+  KnowledgeMetaUpdatePartialSuccess = 145021; // 部分元数据更新成功
+  KnowledgePermissionSelectedFailed = 146001; // 获取知识库权限列表失败，请稍后重试
+  KnowledgePermissionDeny = 146002; // 知识库操作权限不足，请联系管理员添加后重试
+  KnowledgeAddPermissionFailed = 146003; // 知识库添加权限失败，请稍后重试
+  KnowledgeEditPermissionFailed = 146004; // 知识库修改权限失败，请稍后重试
+  KnowledgeDeletePermissionFailed = 146005; // 知识库删除权限失败，请稍后重试
+  KnowledgeDeleteGrantPermissionFailed = 146006; // 知识库的授权权限只有用户本人才能删除
+  KnowledgeTransferPermissionFailed = 146007; // 知识库转让失败
+  KnowledgeGetReportFailed = 147001; // 获取社区报告失败，请稍后重试
+  KnowledgeAddReportFailed = 147002; // 新增社区报告失败，请稍后重试
+  KnowledgeDeleteReportFailed = 147003; // 删除社区报告失败，请稍后重试
+  KnowledgeUpdateReportFailed = 147004; // 更新社区报告失败，请稍后重试
+  KnowledgeGenerateReportFailed = 147005; // 生成社区报告失败，请稍后重试
+  KnowledgeQABaseSelectFailed = 148001; //获取问答库失败，请稍后重试
+  KnowledgeQAPairImportFailed = 148002; //问答库文档导入失败，请稍后重试
+  KnowledgeCreateQAPairFailed = 148003; //新增问答对失败，请稍后重试
+  KnowledgeDuplicateQAPirQuestion = 148004; //问答对问题校验失败，请稍后重试
+  KnowledgeUpdateQAPairFailed = 148005; //更新问答对失败，请稍后重试
+  KnowledgeQAPairSelectFailed = 148006; //获取问答对失败，请稍后重试
+  KnowledgeUpdateQAPairSwitchFailed = 148007; //启停问答对失败，请稍后重试
+  KnowledgeDeleteQAPairFailed = 148008; //删除问答对失败，请稍后重试
+  KnowledgeQAPairsSelectFailed = 148009; //获取问答库问答对列表失败，请稍后重试
+  KnowledgeQAPairExportFailed = 148010; //问答库文档导入失败，请稍后重试
+  KnowledgeExportRecordsSelectFailed = 148011; //获取导出记录列表失败，请稍后重试
+  KnowledgeDeleteExportRecordFailed = 148012; //删除导出记录失败，请稍后重试
+  KnowledgeQAPairImportTaskSelectFailed = 148013; //获取问答库文档任务详情失败，请稍后重试
+  KnowledgeExternalAPICreateFailed = 149001; // 新建外部知识库API失败，请稍后重试
+  KnowledgeExternalAPIDeleteFailed = 149002; // 删除外部知识库API失败，请稍后重试
+  KnowledgeExternalAPIUpdateFailed = 149003; // 修改外部知识库API失败，请稍后重试
+  KnowledgeExternalAPIInfoSelectFailed = 149004; // 获取外部知识库API详情失败，请稍后重试
+  KnowledgeExternalAPIListSelectFailed = 149005; // 获取外部知识库API列表失败，请稍后重试
+  KnowledgeExternalCreateFailed = 149006; // 新建外部知识库失败，请稍后重试
+  KnowledgeExternalDeleteFailed = 149007; // 删除外部知识库失败，请稍后重试
+  KnowledgeExternalUpdateFailed = 149008; // 修改外部知识库失败，请稍后重试
+  KnowledgeExternalInfoSelectFailed = 149009; // 获取外部知识库详情失败，请稍后重试
+  KnowledgeExternalListSelectFailed = 149010; // 获取外部知识库列表失败，请稍后重试
+  KnowledgeExternalAPICheckFailed = 149011; // 校验外部知识库API失败，请稍后重试
+
+
+
+  // --- rag-service ---
+  // [150000, 159999]
+  RagGeneral = 150000; // 通用错误
+  RagRole = 150001; // 角色权限错误
+  RagInfoNotExist = 150002; // rag信息不存在
+  RagDeleteErr = 150003; // 删除rag错误
+  RagGetErr = 150004; // 获取rag错误
+  RagListErr = 150005; // 获取rag列表错误
+  RagCreateErr = 150006; // rag创建错误
+  RagUpdateErr = 150007; // rag更新错误
+  RagChatErr = 150008; // rag流式传输问答错误
+  RagListByIdsErr = 150009; // id列表为空
+  RagDuplicateName = 150010; // 已存在同名文本问答
+  RagPublishErr = 150011; // 发布错误
+
+  // --- assistant-service ---
+  // [160000, 169999]
+  AssistantGeneral = 160000; // 通用错误
+  AssistantErr = 160001; // 智能体相关错误
+  AssistantActionErr = 160002; // 智能体action相关错误
+  AssistantWorkflowErr = 160003; // 智能体workflow相关错误
+  AssistantConversationErr = 160004; // 智能体对话相关错误
+  AssistantMCPErr = 160005; // 智能体MCP相关错误
+  AssistantToolErr = 160006; // 智能体工具相关错误
+  AssistantCustomPromptErr = 160007; // 智能体自定义提示错误
+  AssistantMultiAgentErr = 160008; // 多智能体相关错误
+  SkillConversationCreateErr = 160009; // 创建技能错误
+  SkillConversationUpdateErr = 160010; // 更新技能错误
+  SkillConversationDeleteErr = 160011; // 删除技能错误
+  SkillConversationGetErr = 160012; // 获取技能错误
+  AssistantSkillCreateErr = 160013; // 智能体技能创建错误
+  AssistantSkillDeleteErr = 160014; // 智能体技能删除错误
+  AssistantSkillEnableSwitchErr = 160015; // 智能体技能启用/停用错误
+  WgaConfigUpdateErr = 160016; // 更新智能体配置错误
+  WgaConfigGetErr = 160017; // 获取智能体配置错误
+  WgaConversationUpdateErr = 160018; // 更新智能体对话配置错误
+  WgaConversationGetErr = 160019; // 获取智能体对话配置错误
+  WgaConfigCheckErr = 160020; // 通用智能体配置校验错误
+
+  // --- workflow-service ---
+  // [210000, 219999]
+  WorkflowGeneral = 210000; // 通用错误
+
+  // --- model-service ---
+  // [250000, 259999]
+  ModelGeneral = 250000; // 通用错误
+  ModelImportedModel = 250001; // 导入模型错误
+  ModelGetModelById = 250002; // 根据模型ID查询错误
+  ModelUpdateModel = 250003; // 模型更新错误
+  ModelDeleteModel = 250004; // 模型删除错误
+  ModelGetModel = 250005; // 模型查询错误
+  ModelListModels = 250006; // 模型列表错误
+  ModelChangeModelStatus = 250007; // 模型启用/关停错误
+  ModelListTypeModels = 250008; // 模型llm/rerank/embedding列表错误
+  ModelGetModelByIds = 250009; // 根据模型ID列表查询错误
+  ModelGetModelByUUID = 250010; // 根据模型UUID查询错误
+  ModelListModelsByUuids = 250012; // 根据模型UUID列表查询错误
+
+  ModelExperienceDialog=250014; // 模型体验对话错误
+  ModelExperienceDialogRecord=250011; // 模型体验对话记录错误
+
+
+  // --- app-service ---
+  // [300000, 309999]
+  AppGeneral = 300000; // 通用错误
+  Appkey = 300001; // AppKey相关错误
+  AppExploration = 300002; // APP应用广场相关错误
+  AppSafety = 300003; // 安全护栏相关错误
+  AppSafetySensitiveWordTable = 300004; // 安全护栏敏感词表相关错误
+  AppSafetySensitiveVocabulary = 300005; // 安全护栏敏感词数据相关错误
+  AppSensitiveSameWordError = 300006; // 此词表内存在相同的敏感词，请修改后重试
+  AppSensitiveExistSensitiveError = 300007; // 存在敏感词：%v
+  AppSafetyImportUrlFailed = 300008; // 获取上传文档失败，请稍后重试
+  AppUrl = 300009; // App WebUrl错误
+  AppUrlStatus = 300010; // App WebUrl状态错误
+  AppUrlExpired = 300011; // App WebUrl过期错误
+  AppConversation = 300012; // 对话流相关错误
+  ApiKey = 300013; //ApiKey相关错误
+  AppModelRecord = 300014; //模型统计相关错误
+   AppAPIKeyRecord = 300015; //API Key统计相关错误
+
+
+  // --- mcp-service ---
+  // [310000, 319999]
+  MCPGeneral = 310000; // 通用错误
+  MCPGetSquareMCPErr = 310001; // 获取广场MCP详情错误
+  MCPCreateCustomMCPErr = 310002; // 创建自定义MCP错误
+  MCPGetCustomMCPErr = 310003; // 获取自定义MCP详情错误
+  MCPDeleteCustomMCPErr = 310004; // 删除自定义MCP错误
+  MCPGetCustomMCPListErr = 310005; // 获取自定义MCP列表错误
+  MCPGetMCPAvatarErr = 310006; // 获取MCP头像错误
+  MCPCreateCustomToolErr = 310007; // 创建自定义工具错误
+  MCPGetCustomToolInfoErr = 310008; // 获取自定义工具详情错误
+  MCPGetCustomToolListErr = 310009; // 获取自定义工具列表错误
+  MCPUpdateCustomToolErr = 310010; // 更新自定义工具错误
+  MCPDeleteCustomToolErr = 310011; // 删除自定义工具错误
+  MCPGetSquareToolErr = 310012; // 获取内置工具详情错误
+  MCPCreateMCPServerErr = 310013; // 创建MCP服务错误
+  MCPDeleteMCPServerErr = 310014; // 删除MCP服务错误
+  MCPUpdateMCPServerErr = 310015; // 更新MCP服务错误
+  MCPGetMCPServerInfoErr = 310016; // 获取MCP服务详情错误
+  MCPGetMCPServerListErr = 310017; // 获取MCP服务列表错误
+  MCPCreateMCPServerToolErr = 310018; // 创建MCP服务工具错误
+  MCPUpdateMCPServerToolErr = 310019; // 更新MCP服务工具错误
+  MCPDeleteMCPServerToolErr = 310020; // 删除MCP服务工具错误
+  MCPGetMCPServerToolInfoErr = 310021; // 获取MCP服务工具详情错误
+  MCPGetMCPServerToolListErr = 310022; // 获取MCP服务工具列表错误
+  MCPUpdateCustomMCPErr = 310023; // 更新自定义MCP错误
+  MCPUpdateBuiltinToolErr = 310024; // 更新内置工具错误
+  MCPCustomSkillErr = 310025; // 自定义技能相关错误
+  MCPAcquiredSkillErr = 310026; // 添加skill（Acquired Skill）相关错误
+  MCPBuiltinSkillErr = 310027; // 内置技能相关错误
+
+  // --- operate-service ---
+  // [320000, 329999]
+  OperateGeneral = 320000; // 通用错误
+  OperateCustom = 320001; // 自定义配置相关错误
+  OperateRecord = 320002; // 客户端统计错误
+
+  // --- channel-service ---
+  // [180000, 189999]
+  ChannelGeneral = 180000; // 通道通用错误
+  ChannelNotFound = 180001; // 通道不存在
+  ChannelInvalidArg = 180002; // 参数错误
+  ChannelTypeNotSupported = 180003; // 不支持的通道类型
+  ChannelAdapterInitFailed = 180004; // 适配器初始化失败
+  ChannelQRSessionExpired = 180005; // 扫码会话不存在或已过期
+  ChannelQRLoginFailed = 180006; // 扫码登录失败
+  ChannelNotConnected = 180007; // 通道未连接/未登录
+  ChannelAlreadyExists = 180008; // 通道已存在
+  ChannelApiKeyNotSet = 180009; // 通道未绑定 API Key
+  WanwuAPIError = 180030; // 调用万悟平台 API 失败
+  WanwuAPIAuthFailed = 180031; // 万悟平台 API Key 无效或过期
+  WanwuAPINotFound = 180032; // 万悟平台资源不存在
+  WanwuAgentNotPublished = 180040; // 选中的智能体未发布，无法用于通道对话
+  WanwuApiKeyDisabled = 180041; // 选中的 API Key 已被禁用
+  WanwuApiKeyExpired = 180042; // 选中的 API Key 已过期
+}
+
